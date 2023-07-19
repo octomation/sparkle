@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"go.octolab.org/template/service"
-	"go.octolab.org/template/service/internal/config"
+	service "go.octolab.org/sparkle"
+	"go.octolab.org/sparkle/internal/config"
 )
 
 // NewServer returns the new server command.
