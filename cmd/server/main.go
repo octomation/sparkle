@@ -12,8 +12,8 @@ import (
 	"go.octolab.org/toolkit/cli/cobra"
 	"go.octolab.org/unsafe"
 
-	"go.octolab.org/sparkle/internal/command"
-	"go.octolab.org/sparkle/internal/config"
+	"go.octolab.org/ecosystem/sparkle/internal/command"
+	"go.octolab.org/ecosystem/sparkle/internal/config"
 )
 
 const unknown = "unknown"
