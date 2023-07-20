@@ -1,3 +1,5 @@
+//go:build telegram
+
 package main
 
 import (
@@ -11,11 +13,10 @@ import (
 	"text/template"
 
 	"github.com/google/uuid"
+	tdlib "github.com/zelenin/go-tdlib/client"
 	"go.octolab.org/safe"
 	"go.octolab.org/unsafe"
 	"gopkg.in/yaml.v3"
-
-	tdlib "github.com/zelenin/go-tdlib/client"
 )
 
 var app = struct {
