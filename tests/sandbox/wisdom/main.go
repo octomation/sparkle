@@ -4,6 +4,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -101,14 +102,16 @@ func main() {
 		marker = "fastfounder.ru/news"
 		window = 100
 	)
+	ctx := context.Background()
 
 	if _, err := tdlib.SetLogVerbosityLevel(&tdlib.SetLogVerbosityLevelRequest{
 		NewVerbosityLevel: Error,
 	}); err != nil {
 		panic(err)
 	}
+	tdlib.WithExtraGenerator(uuid.NewString)
 
-	auth := tdlib.ClientAuthorizer()
+	auth := tdlib.NewAppAuthorizer()
 	auth.TdlibParameters <- &tdlib.SetTdlibParametersRequest{
 		ApiId:   app.ID,
 		ApiHash: app.Hash,
@@ -129,12 +132,12 @@ func main() {
 	}
 	go login(auth.State, auth.PhoneNumber, auth.Code, auth.Password)
 
-	client, err := tdlib.NewClient(auth)
-	if err != nil {
+	client := tdlib.NewClient()
+	if err := tdlib.Authorize(ctx, client, auth); err != nil {
 		panic(err)
 	}
 
-	chat, err := client.GetChat(&tdlib.GetChatRequest{ChatId: temno})
+	chat, err := client.GetChat(ctx, &tdlib.GetChatRequest{ChatId: temno})
 	if err != nil {
 		panic(err)
 	}
@@ -142,7 +145,7 @@ func main() {
 	var messages []*tdlib.Message
 	lookup, cursor := window, int64(0)
 	for lookup > 0 {
-		resp, err := client.GetChatHistory(&tdlib.GetChatHistoryRequest{
+		resp, err := client.GetChatHistory(ctx, &tdlib.GetChatHistoryRequest{
 			ChatId:        chat.Id,
 			FromMessageId: cursor,
 			Limit:         Limit,
@@ -175,6 +178,8 @@ func main() {
 	tags := []string{"telegram", "message", "wisdom"}
 	for _, message := range messages {
 		content := message.Content.(*tdlib.MessagePhoto)
+		assert(func() bool { return content.GetType() == message.Content.MessageContentType() })
+		assert(func() bool { return content.Type == content.GetType() })
 
 		f, err := os.Create(fmt.Sprintf("stream/wisdom/tg-%d.md", message.Id))
 		if err != nil {
@@ -191,7 +196,7 @@ func main() {
 					break
 				}
 
-				file, err := client.DownloadFile(&tdlib.DownloadFileRequest{
+				file, err := client.DownloadFile(ctx, &tdlib.DownloadFileRequest{
 					FileId:      size.Photo.Id,
 					Priority:    1,
 					Synchronous: true,
@@ -204,7 +209,7 @@ func main() {
 			}
 		}
 
-		link, err := client.GetMessageLink(&tdlib.GetMessageLinkRequest{
+		link, err := client.GetMessageLink(ctx, &tdlib.GetMessageLinkRequest{
 			ChatId:    chat.Id,
 			MessageId: message.Id,
 		})
@@ -217,7 +222,7 @@ func main() {
 			FrontMatter: FrontMatter{
 				InternalID: uuid.New(),
 				ExternalID: message.Id,
-				Tags:       tags,
+				Tags:       append(tags, classifier(message.Content.MessageContentType())),
 				URL:        link.Link,
 			},
 			Title: title,
@@ -268,6 +273,16 @@ func split(in string) (string, string) {
 		lines = lines[:len(lines)-footer]
 	}
 	return strings.TrimSpace(title), strings.TrimSpace(strings.Join(lines, "\n"))
+}
+
+func assert(truth func() bool) {
+	if !truth() {
+		panic("false statement")
+	}
+}
+
+func classifier(t string) string {
+	return strings.ToLower(strings.TrimPrefix(t, "message"))
 }
 
 // if it returns error 400 Chat not found

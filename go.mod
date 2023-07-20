@@ -18,6 +18,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
+replace github.com/zelenin/go-tdlib => github.com/withsparkle/go-tdlib v0.7.1-0.20231011160900-c4aee4541527
+
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
