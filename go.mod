@@ -1,4 +1,4 @@
-module go.octolab.org/sparkle
+module go.octolab.org/ecosystem/sparkle
 
 go 1.20
 

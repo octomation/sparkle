@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	. "go.octolab.org/sparkle/internal/command"
+	. "go.octolab.org/ecosystem/sparkle/internal/command"
 )
 
 func TestNewServer(t *testing.T) {
