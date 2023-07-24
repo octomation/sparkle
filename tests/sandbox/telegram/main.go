@@ -13,12 +13,14 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"syscall"
 	"text/template"
 
 	"github.com/google/uuid"
 	tdlib "github.com/zelenin/go-tdlib/client"
 	"go.octolab.org/safe"
 	"go.octolab.org/unsafe"
+	"golang.org/x/crypto/ssh/terminal"
 	"gopkg.in/yaml.v3"
 )
 
@@ -206,9 +208,8 @@ func login(status <-chan tdlib.AuthorizationState, phone, code, pass chan<- stri
 
 		case tdlib.TypeAuthorizationStateWaitPassword:
 			fmt.Println("Enter password:")
-			var value string
-			_, _ = fmt.Scanln(&value)
-			pass <- value
+			secret, _ := terminal.ReadPassword(syscall.Stdin)
+			pass <- string(secret)
 
 		case tdlib.TypeAuthorizationStateReady:
 			return
