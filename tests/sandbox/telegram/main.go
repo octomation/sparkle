@@ -4,12 +4,15 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/google/uuid"
@@ -88,13 +91,16 @@ func (md Markdown) DumpTo(file io.WriteCloser) error {
 }
 
 func main() {
+	ctx := context.Background()
+
 	if _, err := tdlib.SetLogVerbosityLevel(&tdlib.SetLogVerbosityLevelRequest{
 		NewVerbosityLevel: Error,
 	}); err != nil {
 		panic(err)
 	}
+	tdlib.WithExtraGenerator(uuid.NewString)
 
-	auth := tdlib.ClientAuthorizer()
+	auth := tdlib.NewAppAuthorizer()
 	auth.TdlibParameters <- &tdlib.SetTdlibParametersRequest{
 		ApiId:   app.ID,
 		ApiHash: app.Hash,
@@ -115,12 +121,12 @@ func main() {
 	}
 	go login(auth.State, auth.PhoneNumber, auth.Code, auth.Password)
 
-	client, err := tdlib.NewClient(auth)
-	if err != nil {
+	client := tdlib.NewClient()
+	if err := tdlib.Authorize(ctx, client, auth); err != nil {
 		panic(err)
 	}
 
-	user, err := client.GetMe()
+	user, err := client.GetMe(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -128,7 +134,7 @@ func main() {
 	var messages []*tdlib.Message
 	cursor := int64(0)
 	for {
-		resp, err := client.GetChatHistory(&tdlib.GetChatHistoryRequest{
+		resp, err := client.GetChatHistory(ctx, &tdlib.GetChatHistoryRequest{
 			ChatId:        user.Id,
 			FromMessageId: cursor,
 			Limit:         Limit,
@@ -156,12 +162,24 @@ func main() {
 			panic(err)
 		}
 
+		link, err := client.GetMessageLink(ctx, &tdlib.GetMessageLinkRequest{
+			ChatId:    message.ChatId,
+			MessageId: message.Id,
+		})
+		if err != nil {
+			var valid tdlib.ResponseError
+			if !errors.As(err, &valid) {
+				panic(err)
+			}
+			link = &tdlib.MessageLink{Link: ""}
+		}
+
 		md := Markdown{
 			FrontMatter: FrontMatter{
 				InternalID: uuid.New(),
 				ExternalID: message.Id,
-				Tags:       tags,
-				URL:        "",
+				Tags:       append(tags, classifier(message.Content.MessageContentType())),
+				URL:        link.Link,
 			},
 			raw: message,
 		}
@@ -196,6 +214,10 @@ func login(status <-chan tdlib.AuthorizationState, phone, code, pass chan<- stri
 			return
 		}
 	}
+}
+
+func classifier(t string) string {
+	return strings.ToLower(strings.TrimPrefix(t, "message"))
 }
 
 // if it returns error 400 Chat not found
