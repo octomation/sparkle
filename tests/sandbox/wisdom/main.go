@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/google/uuid"
@@ -47,7 +48,11 @@ const (
 var tpl = template.Must(template.New("slack").Parse(`---
 {{ .FrontMatter -}}
 ---
-# Title
+# {{ .Title }}
+
+![]({{ .Image }})
+
+{{ .Text }}
 
 <!-- raw
 ` + "```json" + `
@@ -71,7 +76,10 @@ func (fm FrontMatter) String() string {
 
 type Markdown struct {
 	FrontMatter
-	raw interface{}
+	Title string
+	Image string
+	Text  string
+	raw   interface{}
 }
 
 func (md Markdown) Raw() string {
@@ -88,6 +96,12 @@ func (md Markdown) DumpTo(file io.WriteCloser) error {
 }
 
 func main() {
+	const (
+		temno  = -1001060205892
+		marker = "fastfounder.ru/news"
+		window = 100
+	)
+
 	if _, err := tdlib.SetLogVerbosityLevel(&tdlib.SetLogVerbosityLevelRequest{
 		NewVerbosityLevel: Error,
 	}); err != nil {
@@ -120,16 +134,16 @@ func main() {
 		panic(err)
 	}
 
-	user, err := client.GetMe()
+	chat, err := client.GetChat(&tdlib.GetChatRequest{ChatId: temno})
 	if err != nil {
 		panic(err)
 	}
 
 	var messages []*tdlib.Message
-	cursor := int64(0)
-	for {
+	lookup, cursor := window, int64(0)
+	for lookup > 0 {
 		resp, err := client.GetChatHistory(&tdlib.GetChatHistoryRequest{
-			ChatId:        user.Id,
+			ChatId:        chat.Id,
 			FromMessageId: cursor,
 			Limit:         Limit,
 			OnlyLocal:     false,
@@ -141,29 +155,75 @@ func main() {
 			break
 		}
 
-		messages = append(messages, resp.Messages...)
+		for _, message := range resp.Messages {
+			switch message.Content.MessageContentType() {
+			case tdlib.TypeMessagePhoto:
+				content := message.Content.(*tdlib.MessagePhoto)
+				if strings.Contains(content.Caption.Text, marker) {
+					messages = append(messages, message)
+				}
+			}
+		}
 		cursor = resp.Messages[len(resp.Messages)-1].Id
+		lookup -= len(resp.Messages)
 	}
 
 	if len(messages) == 0 {
-		panic("there are no saved messages")
+		panic("there are no messages")
 	}
 
-	tags := []string{"telegram", "message"}
+	tags := []string{"telegram", "message", "wisdom"}
 	for _, message := range messages {
-		f, err := os.Create(fmt.Sprintf("stream/telegram/tg-%d.md", message.Id))
+		content := message.Content.(*tdlib.MessagePhoto)
+
+		f, err := os.Create(fmt.Sprintf("stream/wisdom/tg-%d.md", message.Id))
 		if err != nil {
 			panic(err)
 		}
 
+		var path string
+		for _, size := range content.Photo.Sizes {
+			if size.Width > 480 {
+				present := size.Photo.Local.IsDownloadingActive
+				present = present || size.Photo.Local.IsDownloadingCompleted
+				if present {
+					path = size.Photo.Local.Path
+					break
+				}
+
+				file, err := client.DownloadFile(&tdlib.DownloadFileRequest{
+					FileId:      size.Photo.Id,
+					Priority:    1,
+					Synchronous: true,
+				})
+				if err != nil {
+					panic(err)
+				}
+				path = file.Local.Path
+				break
+			}
+		}
+
+		link, err := client.GetMessageLink(&tdlib.GetMessageLinkRequest{
+			ChatId:    chat.Id,
+			MessageId: message.Id,
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		title, text := split(content.Caption.Text)
 		md := Markdown{
 			FrontMatter: FrontMatter{
 				InternalID: uuid.New(),
 				ExternalID: message.Id,
 				Tags:       tags,
-				URL:        "",
+				URL:        link.Link,
 			},
-			raw: message,
+			Title: title,
+			Image: path,
+			Text:  text,
+			raw:   message,
 		}
 		if err := md.DumpTo(f); err != nil {
 			panic(err)
@@ -196,6 +256,18 @@ func login(status <-chan tdlib.AuthorizationState, phone, code, pass chan<- stri
 			return
 		}
 	}
+}
+
+func split(in string) (string, string) {
+	const footer = 3
+	var title string
+
+	lines := strings.Split(in, "\n")
+	title, lines = lines[0], lines[1:]
+	if len(lines) > footer {
+		lines = lines[:len(lines)-footer]
+	}
+	return strings.TrimSpace(title), strings.TrimSpace(strings.Join(lines, "\n"))
 }
 
 // if it returns error 400 Chat not found
