@@ -1,0 +1,44 @@
+syntax = 'proto3';
+
+package sparkle.service.v1;
+
+import 'protoc-gen-openapiv2/options/annotations.proto';
+
+option go_package = "go.octolab.org/ecosystem/sparkle/internal/api/v1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: 'Sparkle'
+    description: 'Sparkle Service API Specification.'
+    terms_of_service: 'https://sparkle.wiki/'
+
+    contact: {
+      name: 'Sparkle team'
+      url: 'https://sparkle.wiki/'
+      email: 'hi@sparkle.wiki'
+    }
+
+    license: {
+      name: 'AGPL-3.0-later'
+      url: 'https://github.com/withsparkle/service/blob/main/LICENSE'
+    }
+
+    version: '0.0.1'
+  }
+};
+
+message PingRequest {
+  bool env = 1;
+}
+
+message PongResponse {
+  string name = 1;
+  string hostname = 2;
+  repeated string ip = 3;
+  string remote_addr = 4;
+  map<string, string> env = 5;
+}
+
+service Service {
+  rpc WhoAmI(PingRequest) returns (PongResponse) {}
+}
