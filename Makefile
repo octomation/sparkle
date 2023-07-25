@@ -492,3 +492,24 @@ install: go-install
 
 verbose: make-verbose go-verbose
 .PHONY: verbose
+
+# candidates
+
+buf-generate:
+	buf generate api/protobuf
+.PHONY: buf-generate
+
+buf-lint:
+	buf lint api/protobuf #--error-format=config-ignore-yaml
+.PHONY: buf-lint
+
+buf-refresh:
+	cd api/protobuf && buf mod update && buf build
+.PHONY: buf-refresh
+
+buf-stub:
+	buf curl \
+      --schema api/protobuf \
+      --data '{"env": true}' \
+      http://localhost:8080/sparkle.service.v1.Service/WhoAmI
+.PHONY: buf-stub
