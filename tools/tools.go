@@ -5,6 +5,7 @@
 package tools
 
 import (
+	_ "github.com/bufbuild/buf/cmd/buf"
 	_ "github.com/golang/mock/mockgen"
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/goreleaser/godownloader"
@@ -18,6 +19,7 @@ import (
 	_ "google.golang.org/protobuf/cmd/protoc-gen-go"
 )
 
+//go:generate go install github.com/bufbuild/buf/cmd/buf
 //go:generate go install github.com/golang/mock/mockgen
 //go:generate go install github.com/golangci/golangci-lint/cmd/golangci-lint
 //go:generate go install github.com/goreleaser/godownloader
