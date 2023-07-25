@@ -1,46 +1,21 @@
 version: v1
 
+name: buf.build/sparkle/service
+
 breaking:
   use:
     - FILE
 
+deps:
+  - buf.build/grpc-ecosystem/grpc-gateway
+
 lint:
   use:
     - DEFAULT
-  ignore:
-    - api/protobuf/google/protobuf/descriptor.proto
-    - api/protobuf/google/protobuf/struct.proto
-    - api/protobuf/protoc-gen-openapiv2/options/openapiv2.proto
 
   ignore_only:
-    ENUM_FIRST_VALUE_ZERO:
-      - google/protobuf/descriptor.proto
-    ENUM_VALUE_PREFIX:
-      - google/protobuf/descriptor.proto
-      - google/protobuf/struct.proto
-      - protoc-gen-openapiv2/options/openapiv2.proto
-    ENUM_ZERO_VALUE_SUFFIX:
-      - google/protobuf/descriptor.proto
-      - google/protobuf/struct.proto
-      - protoc-gen-openapiv2/options/openapiv2.proto
     PACKAGE_DIRECTORY_MATCH:
-      - protoc-gen-openapiv2/options/annotations.proto
-      - protoc-gen-openapiv2/options/openapiv2.proto
       - service/v1/service.proto
-    PACKAGE_SAME_CSHARP_NAMESPACE:
-      - google/protobuf/descriptor.proto
-      - google/protobuf/struct.proto
-    PACKAGE_SAME_GO_PACKAGE:
-      - google/protobuf/descriptor.proto
-      - google/protobuf/struct.proto
-    PACKAGE_SAME_JAVA_MULTIPLE_FILES:
-      - google/protobuf/descriptor.proto
-      - google/protobuf/struct.proto
-    PACKAGE_VERSION_SUFFIX:
-      - google/protobuf/descriptor.proto
-      - google/protobuf/struct.proto
-      - protoc-gen-openapiv2/options/annotations.proto
-      - protoc-gen-openapiv2/options/openapiv2.proto
     RPC_REQUEST_STANDARD_NAME:
       - service/v1/service.proto
     RPC_RESPONSE_STANDARD_NAME:

@@ -7,6 +7,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.1
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/slack-go/slack v0.12.3
 	github.com/spf13/afero v1.10.0
 	github.com/spf13/cobra v1.7.0
