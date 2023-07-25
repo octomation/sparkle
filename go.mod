@@ -3,6 +3,7 @@ module go.octolab.org/ecosystem/sparkle
 go 1.20
 
 require (
+	connectrpc.com/connect v1.11.1
 	github.com/fatih/color v1.15.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.1
@@ -16,6 +17,8 @@ require (
 	go.octolab.org/toolkit/cli v0.6.3
 	go.octolab.org/toolkit/config v0.0.4
 	golang.org/x/crypto v0.14.0
+	golang.org/x/net v0.17.0
+	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
