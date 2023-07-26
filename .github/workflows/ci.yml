@@ -18,7 +18,6 @@ on:
       - '**.go'
       - 'go.{mod,sum}'
       - 'Makefile'
-    tags: [ '!*' ]
 
   schedule:
     - cron: 0 7 1 * * # at 07:00 on day-of-month 1, UTC

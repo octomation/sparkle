@@ -9,9 +9,6 @@ on:
         default: manual healthcheck
         required: true
 
-  push:
-    tags: [ 'v*' ]
-
 jobs:
   release:
     name: Releasing
