@@ -1,58 +1,58 @@
-project_name: service
+project_name: sparkle
 
 archives:
-  - id: service
+  - id: sparkle
     builds:
       - client
       - server
     files:
       - LICENSE
+      - PATENTS
     format: tar.gz
     name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
 
 brews:
-  - name: service
-    caveats: An example of the goreleaser usage.
+  - name: sparkle
     commit_author:
       name: Kamil Samigullin
       email: kamil@samigullin.info
-    description: Template for a typical service written on Go.
+    description: ✨ Sparkle service.
     folder: Formula
-    homepage: https://go-service.octolab.org/
+    homepage: https://sparkle.wiki/
     repository:
       owner: octolab
       name: homebrew-tap
     install: |
-      bin.install "service"
+      bin.install "sparkle"
 
-      output = Utils.popen_read("#{bin}/server completion bash")
-      (bash_completion/"server").write output
+      output = Utils.popen_read("#{bin}/sparkle completion bash")
+      (bash_completion/"sparkle").write output
 
-      output = Utils.popen_read("#{bin}/server completion fish")
-      (fish_completion/"server.fish").write output
+      output = Utils.popen_read("#{bin}/sparkle completion fish")
+      (fish_completion/"sparkle.fish").write output
 
-      output = Utils.popen_read("#{bin}/server completion zsh")
-      (zsh_completion/"_server").write output
+      output = Utils.popen_read("#{bin}/sparkle completion zsh")
+      (zsh_completion/"_sparkle").write output
 
-      bin.install "serverctl"
+      bin.install "sparklectl"
 
-      output = Utils.popen_read("#{bin}/serverctl completion bash")
-      (bash_completion/"serverctl").write output
+      output = Utils.popen_read("#{bin}/sparklectl completion bash")
+      (bash_completion/"sparklectl").write output
 
-      output = Utils.popen_read("#{bin}/serverctl completion fish")
-      (fish_completion/"serverctl.fish").write output
+      output = Utils.popen_read("#{bin}/sparklectl completion fish")
+      (fish_completion/"sparklectl.fish").write output
 
-      output = Utils.popen_read("#{bin}/serverctl completion zsh")
-      (zsh_completion/"_serverctl").write output
+      output = Utils.popen_read("#{bin}/sparklectl completion zsh")
+      (zsh_completion/"_sparklectl").write output
 
       prefix.install_metafiles
     test: |
-      system "#{bin}/server    version"
-      system "#{bin}/serverctl version"
+      system "#{bin}/sparkle    version"
+      system "#{bin}/sparklectl version"
 
 builds:
   - id: client
-    binary: serverctl
+    binary: sparklectl
     env:
       - CGO_ENABLED=0
     flags:
@@ -67,7 +67,7 @@ builds:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
     main: ./cmd/client
   - id: server
-    binary: server
+    binary: sparkle
     env:
       - CGO_ENABLED=0
     flags:
@@ -86,5 +86,5 @@ checksum: { name_template: checksums.txt }
 
 release:
   github:
-    owner: octomation
-    name: go-service
+    owner: withsparkle
+    name: service
