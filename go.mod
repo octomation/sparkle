@@ -1,6 +1,8 @@
 module go.octolab.org/ecosystem/sparkle
 
-go 1.20
+go 1.21
+
+toolchain go1.21.3
 
 require (
 	connectrpc.com/connect v1.11.1
@@ -11,7 +13,6 @@ require (
 	github.com/slack-go/slack v0.12.3
 	github.com/spf13/afero v1.10.0
 	github.com/spf13/cobra v1.7.0
-	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
 	github.com/zelenin/go-tdlib v0.7.0
 	go.octolab.org v0.12.2
@@ -43,6 +44,7 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/viper v1.17.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
