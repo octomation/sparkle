@@ -38,21 +38,17 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
         with: { fetch-depth: 0 }
       - name: Set up Go environment
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v4.1.0
         with:
           go-version: 1.21.x
-          cache-dependency-path: tools/go.sum
           check-latest: true
-      - name: Set up environment
-        run: make tools
 
-      - name: Run linter
-        run: make lint
-      - name: Run fast check the state
-        run: make fast-check
+      # TODO:debt
+      #  skipped until golangci-lint-action won't be implemented
+      #  or tools won't be optimized
 
   test:
     name: Testing
@@ -67,11 +63,13 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
         with: { fetch-depth: 0 }
       - name: Set up Go environment
-        uses: actions/setup-go@v4
-        with: { go-version: '${{ matrix.go }}', check-latest: true }
+        uses: actions/setup-go@v4.1.0
+        with:
+          go-version: '${{ matrix.go }}'
+          check-latest: true
       - name: Set up environment
         run: make env deps
 
@@ -84,7 +82,7 @@ jobs:
         run: make test-with-coverage
         if: matrix.go == '1.21.x'
       - name: Store code coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with: { name: code-coverage-report, path: c.out }
         if: matrix.go == '1.21.x'
 
@@ -100,14 +98,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-
       - name: Fetch code coverage report
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.0.2
         with: { name: code-coverage-report }
-      - name: Send code coverage report to Codecov (codecov.io)
+      - name: Send code coverage report to Codecov
         uses: codecov/codecov-action@v3.1.4
         with: { files: c.out }
 
@@ -115,11 +109,12 @@ jobs:
     name: Notifying
     needs: [ lint, test ]
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' && (failure() || success())
+    if: github.event_name != 'pull_request'
+      && (failure() || success())
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
         with: { fetch-depth: 0 }
 
       - name: Send notification
