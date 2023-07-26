@@ -92,6 +92,16 @@ jobs:
           make server install
           [ $(ls bin/linux/*/* | wc -l) = 2 ]
 
+  release:
+    name: Releasing
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Release publishing
+        uses: ./.github/workflows/cd.bins.yml
+
   report:
     name: Reporting
     needs: [ test ]

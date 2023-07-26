@@ -11,9 +11,9 @@ on:
         type: choice
         options:
           - All
-          - Continuous delivery
           - Continuous integration
           - Documentation delivery
+          - Release delivery
           - Stale issues cleanup
           - Tools validation
           - Workflow caches cleanup
