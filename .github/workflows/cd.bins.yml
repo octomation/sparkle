@@ -2,6 +2,9 @@ name: Release delivery
 
 on:
   workflow_call:
+    secrets:
+      GORELEASER_TOKEN:
+        required: true
 
   workflow_dispatch:
     inputs:
