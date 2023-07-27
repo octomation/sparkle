@@ -5,6 +5,8 @@ const withNextra = require('nextra')({
 
 if (process.env.TARGET === 'static') {
   module.exports = withNextra({
+    basePath: '/service',
+
     output: 'export',
     distDir: 'dist',
 
