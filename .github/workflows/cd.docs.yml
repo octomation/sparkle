@@ -47,8 +47,12 @@ jobs:
 
       - name: Build the documentation
         run: |
-          path=$(gh api repos/${{ github.repository }}/pages --jq '.html_url')
-          TARGET=static BASE_PATH="${path}" ./Taskfile docs build
+          path=$(
+            gh api repos/${{ github.repository }}/pages \
+              --jq '.html_url' |
+            awk -F'https?://[^/]+' '{print $2}'
+          )
+          TARGET=static BASE_PATH="${path%/}" ./Taskfile docs build
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload the documentation
