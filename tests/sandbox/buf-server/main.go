@@ -11,17 +11,21 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
-	whoami "go.octolab.org/ecosystem/sparkle/internal/api/service/v1"
-	server "go.octolab.org/ecosystem/sparkle/internal/api/service/v1/servicev1connect"
+	whoami "sandbox/buf-server/internal/api/service/v1"
+	server "sandbox/buf-server/internal/api/service/v1/servicev1connect"
 )
 
 const address = "localhost:8080"
 
+//	run buf curl \
+//	 --schema api/protobuf \
+//	 --data '{"env": true}' \
+//	 http://localhost:8080/sparkle.service.v1.Service/WhoAmI
 func main() {
 	mux := http.NewServeMux()
 	path, handler := server.NewServiceHandler(&service{})
 	mux.Handle(path, handler)
-	fmt.Println("... Listening on", address)
+	fmt.Println("listening on", address)
 	_ = http.ListenAndServe(
 		address,
 		h2c.NewHandler(mux, &http2.Server{}),
