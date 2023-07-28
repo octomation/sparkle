@@ -5,7 +5,7 @@ const withNextra = require('nextra')({
 
 if (process.env.TARGET === 'static') {
   module.exports = withNextra({
-    basePath: process.env.BASE_PATH || '/',
+    basePath: process.env.BASE_PATH,
 
     output: 'export',
     distDir: 'dist',

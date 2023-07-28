@@ -16,7 +16,8 @@ jobs:
   delete:
     name: Deleting
     runs-on: ubuntu-latest
-
+    permissions:
+      actions: write
     env:
       GITHUB_TOKEN: ${{ github.token }}
 
@@ -40,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
         with: { fetch-depth: 0 }
 
       - name: Send notification
