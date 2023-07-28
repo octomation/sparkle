@@ -1,5 +1,3 @@
-//go:build telegram
-
 package main
 
 import (
