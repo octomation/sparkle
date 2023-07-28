@@ -11,8 +11,8 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
-	whoami "sandbox/buf-server/internal/api/service/v1"
-	server "sandbox/buf-server/internal/api/service/v1/servicev1connect"
+	whoami "sparkle/sandbox/buf-server/internal/api/service/v1"
+	server "sparkle/sandbox/buf-server/internal/api/service/v1/servicev1connect"
 )
 
 const address = "localhost:8080"

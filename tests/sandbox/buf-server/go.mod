@@ -1,4 +1,4 @@
-module sandbox/buf-server
+module sparkle/sandbox/buf-server
 
 go 1.21.3
 

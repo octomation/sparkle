@@ -1,4 +1,4 @@
-module sandbox/slack-app
+module sparkle/sandbox/slack-app
 
 go 1.21.3
 

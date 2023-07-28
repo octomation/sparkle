@@ -12,7 +12,7 @@ import (
 
 	"connectrpc.com/connect"
 
-	v1 "sandbox/buf-server/internal/api/service/v1"
+	v1 "sparkle/sandbox/buf-server/internal/api/service/v1"
 )
 
 // This is a compile-time assertion to ensure that this generated file and the connect package are

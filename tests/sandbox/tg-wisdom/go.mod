@@ -1,4 +1,4 @@
-module sparkle/sandbox/tg-app
+module sparkle/sandbox/tg-wisdom
 
 go 1.21.3
 
