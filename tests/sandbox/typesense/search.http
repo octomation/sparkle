@@ -1,0 +1,10 @@
+###
+
+GET http://localhost:8108/health
+
+###
+
+GET http://localhost:8108/collections/wisdom/documents/search?q=YC&query_by=content
+X-Typesense-API-Key: 612fc8ac-ac81-4b79-8651-db55b2783698
+
+###

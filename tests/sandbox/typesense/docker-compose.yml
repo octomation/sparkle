@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  search:
+    image: typesense/typesense:0.25.1
+    ports:
+      - "8108:8108"
+    volumes:
+      - typesense:/data
+    command:
+      - "--data-dir"
+      - "/data"
+      - "--api-key=612fc8ac-ac81-4b79-8651-db55b2783698"
+    restart: unless-stopped
+
+volumes:
+  typesense:
