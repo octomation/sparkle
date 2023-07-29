@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: 0 6 1 * * # at 06:00 on day-of-month 1, UTC
 
+  workflow_call:
+
   workflow_dispatch:
     inputs:
       reason:

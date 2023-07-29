@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/ci.yml'
       - '.golangci.yml'
-      - '**.go'
+      - '*.go'
       - 'go.{mod,sum}'
       - 'Makefile'
 
@@ -15,7 +15,7 @@ on:
     paths:
       - '.github/workflows/ci.yml'
       - '.golangci.yml'
-      - '**.go'
+      - '*.go'
       - 'go.{mod,sum}'
       - 'Makefile'
     tags: [ 'v*' ]
