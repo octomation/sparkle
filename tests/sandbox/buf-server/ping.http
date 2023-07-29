@@ -1,0 +1,8 @@
+###
+
+POST http://localhost:8080/sparkle.service.v1.Service/WhoAmI
+Content-Type: application/json
+
+{"env": true}
+
+###
