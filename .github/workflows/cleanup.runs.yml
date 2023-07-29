@@ -15,7 +15,6 @@ on:
           - Documentation delivery
           - Release delivery
           - Stale issues cleanup
-          - Tools validation
           - Workflow caches cleanup
           - Workflow caches warmup
           - Workflow runs cleanup
