@@ -10,6 +10,7 @@ import (
 
 	api "go.octolab.org/ecosystem/sparkle/internal/api/service/v1"
 	"go.octolab.org/ecosystem/sparkle/internal/api/service/v1/servicev1connect"
+	tact "go.octolab.org/ecosystem/sparkle/internal/modules/tact/command"
 )
 
 // NewClient returns the new client command.
@@ -46,6 +47,8 @@ func NewClient() *cobra.Command {
 			return enc.Encode(resp.Msg)
 		},
 	})
+
+	command.AddCommand(tact.New())
 
 	return command
 }
