@@ -312,7 +312,7 @@ go-server:
 .PHONY: go-server
 
 go-dist-check:
-	$(AT) goreleaser --clean --skip-publish --snapshot
+	$(AT) goreleaser --clean --skip=publish --snapshot
 .PHONY: go-dist-check
 
 go-dist-clean:

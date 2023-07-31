@@ -2,9 +2,6 @@ project_name: sparkle
 
 archives:
   - id: sparkle
-    builds:
-      - client
-      - server
     files:
       - LICENSE
       - PATENTS
@@ -16,7 +13,9 @@ brews:
     commit_author:
       name: Kamil Samigullin
       email: kamil@samigullin.info
-    description: ✨ Sparkle service.
+    description: |
+      ✨ Sparkle service. The personal development framework
+      and Personal Knowledge Management platform.
     folder: Formula
     homepage: https://sparkle.wiki/
     repository:
@@ -34,39 +33,12 @@ brews:
       output = Utils.popen_read("#{bin}/sparkle completion zsh")
       (zsh_completion/"_sparkle").write output
 
-      bin.install "sparklectl"
-
-      output = Utils.popen_read("#{bin}/sparklectl completion bash")
-      (bash_completion/"sparklectl").write output
-
-      output = Utils.popen_read("#{bin}/sparklectl completion fish")
-      (fish_completion/"sparklectl.fish").write output
-
-      output = Utils.popen_read("#{bin}/sparklectl completion zsh")
-      (zsh_completion/"_sparklectl").write output
-
       prefix.install_metafiles
     test: |
-      system "#{bin}/sparkle    version"
-      system "#{bin}/sparklectl version"
+      system "#{bin}/sparkle version"
 
 builds:
-  - id: client
-    binary: sparklectl
-    env:
-      - CGO_ENABLED=0
-    flags:
-      - -trimpath
-    goarch:
-      - amd64
-      - arm64
-    goos:
-      - darwin
-      - linux
-    ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-    main: ./cmd/client
-  - id: server
+  - id: sparkle
     binary: sparkle
     env:
       - CGO_ENABLED=0
@@ -80,7 +52,7 @@ builds:
       - linux
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-    main: ./cmd/server
+    main: .
 
 checksum: { name_template: checksums.txt }
 
