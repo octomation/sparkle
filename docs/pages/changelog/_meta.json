@@ -1,6 +1,6 @@
 {
-  "v1.0.0": {
-    "title": "v1.0.0",
+  "v0.1.0": {
+    "title": "v0.1.0",
     "theme": {
       "breadcrumb": false,
       "pagination": false
