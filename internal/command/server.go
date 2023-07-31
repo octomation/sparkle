@@ -13,7 +13,7 @@ import (
 // NewServer returns the new server command.
 func NewServer() *cobra.Command {
 	command := &cobra.Command{
-		Use:   "sparkle",
+		Use:   "server",
 		Short: "sparkle server",
 		Long:  "✨ Sparkle service provider.",
 
