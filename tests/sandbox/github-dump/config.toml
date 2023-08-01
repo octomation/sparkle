@@ -1,122 +1,28 @@
-[repository]
+[github]
+affiliation = ['owner', 'organization_member']
+tags = ['github', 'repository']
 
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/breakit.git'
-aliases = ['go.octolab.org/toolset/breakit']
+readme = "README.md"
+limit = 100
 
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/cli.git'
-aliases = ['go.octolab.org/toolkit/cli']
+collision = "{{ .GetName }} at {{ .GetLogin .GetOwner }}"
+[github.alt]
+tags = ['debt', 'todo']
+draft = """
+# {{ .GetName | emoji }}
 
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/config.git'
-aliases = ['go.octolab.org/toolkit/config']
+{{ .GetDescription }}
+"""
 
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/maintainer.git'
-aliases = ['go.octolab.org/toolset/maintainer']
+[github.include]
+list = [
+  'kamilsk/godownloader',
+  'kamilsk/go-tools',
+  'kamilsk/golangci-lint',
+  'under-the-hood/persona',
+]
 
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/parallel.git'
-aliases = ['go.octolab.org/toolset/parallel']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/pkg.git'
-aliases = ['go.octolab.org']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/propaganda.git'
-aliases = ['go.octolab.org/propaganda']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/protocol.git'
-aliases = ['go.octolab.org/toolkit/protocol']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/testit.git'
-aliases = ['go.octolab.org/toolset/testit']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octolab/try.git'
-aliases = ['go.octolab.org/toolset/try']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octomation/go-module.git'
-aliases = ['go.octolab.org/template/module']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octomation/go-service.git'
-aliases = ['go.octolab.org/template/service']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octomation/go-tool.git'
-aliases = ['go.octolab.org/template/tool']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octomation/tablo.git'
-aliases = ['go.octolab.org/ecosystem/tablo']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octopot/forma.git'
-aliases = ['go.octolab.org/ecosystem/forma']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octopot/guard.git'
-aliases = ['go.octolab.org/ecosystem/guard']
-
-[[repository.aliases]]
-ssh = 'git@github.com:octopot/passport.git'
-aliases = ['go.octolab.org/ecosystem/passport']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/airseat.git'
-aliases = ['go.octolab.org/toolset/airseat']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/beads.git'
-aliases = ['go.octolab.org/ecosystem/beads']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/click.git'
-aliases = ['go.octolab.org/ecosystem/click']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/github.git'
-aliases = ['go.octolab.org/tact/inbox/github']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/inbox.git'
-aliases = ['go.octolab.org/template/inbox']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/loop.git'
-aliases = ['go.octolab.org/toolset/loop']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/optflow.git'
-aliases = ['go.octolab.org/toolset/optflow']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/secret.git'
-aliases = ['go.octolab.org/toolset/secret']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/service.git'
-aliases = ['go.octolab.org/ecosystem/tact']
-
-[[repository.aliases]]
-ssh = 'git@github.com:tact-app/trello.git'
-aliases = ['go.octolab.org/tact/inbox/trello']
-
-[[repository.aliases]]
-ssh = 'git@github.com:withsparkle/fiddle.git'
-aliases = ['go.octolab.org/toolset/fiddle']
-
-[[repository.aliases]]
-ssh = 'git@github.com:withsparkle/service.git'
-aliases = ['go.octolab.org/ecosystem/sparkle']
-
-[repository.exclude]
+[github.exclude]
 list = [
   'kamilsk/algobox',
   'kamilsk/CilexServiceProviders',
@@ -134,3 +40,135 @@ patterns = [
   '^under-the-hood/',
   '/site$',
 ]
+
+[[github.canonical]]
+name = 'tact'
+real = 'tact-app'
+
+[[github.canonical]]
+name = 'research'
+real = 'under-the-hood'
+
+[[github.canonical]]
+name = 'sparkle'
+real = 'withsparkle'
+
+[[github.aliases]]
+ssh = 'git@github.com:kamilsk/go-tools.git'
+aliases = ['goimports']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/breakit.git'
+aliases = ['go.octolab.org/toolset/breakit']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/cli.git'
+aliases = ['go.octolab.org/toolkit/cli']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/config.git'
+aliases = ['go.octolab.org/toolkit/config']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/maintainer.git'
+aliases = ['go.octolab.org/toolset/maintainer']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/parallel.git'
+aliases = ['go.octolab.org/toolset/parallel']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/pkg.git'
+aliases = ['go.octolab.org']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/propaganda.git'
+aliases = ['go.octolab.org/propaganda']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/protocol.git'
+aliases = ['go.octolab.org/toolkit/protocol']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/testit.git'
+aliases = ['go.octolab.org/toolset/testit']
+
+[[github.aliases]]
+ssh = 'git@github.com:octolab/try.git'
+aliases = ['go.octolab.org/toolset/try']
+
+[[github.aliases]]
+ssh = 'git@github.com:octomation/go-module.git'
+aliases = ['go.octolab.org/template/module']
+
+[[github.aliases]]
+ssh = 'git@github.com:octomation/go-service.git'
+aliases = ['go.octolab.org/template/service']
+
+[[github.aliases]]
+ssh = 'git@github.com:octomation/go-tool.git'
+aliases = ['go.octolab.org/template/tool']
+
+[[github.aliases]]
+ssh = 'git@github.com:octomation/tablo.git'
+aliases = ['go.octolab.org/ecosystem/tablo']
+
+[[github.aliases]]
+ssh = 'git@github.com:octopot/forma.git'
+aliases = ['go.octolab.org/ecosystem/forma']
+
+[[github.aliases]]
+ssh = 'git@github.com:octopot/guard.git'
+aliases = ['go.octolab.org/ecosystem/guard']
+
+[[github.aliases]]
+ssh = 'git@github.com:octopot/passport.git'
+aliases = ['go.octolab.org/ecosystem/passport']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/airseat.git'
+aliases = ['go.octolab.org/toolset/airseat']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/beads.git'
+aliases = ['go.octolab.org/ecosystem/beads']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/click.git'
+aliases = ['go.octolab.org/ecosystem/click']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/github.git'
+aliases = ['go.octolab.org/tact/inbox/github']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/inbox.git'
+aliases = ['go.octolab.org/template/inbox']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/loop.git'
+aliases = ['go.octolab.org/toolset/loop']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/optflow.git'
+aliases = ['go.octolab.org/toolset/optflow']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/secret.git'
+aliases = ['go.octolab.org/toolset/secret']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/service.git'
+aliases = ['go.octolab.org/ecosystem/tact']
+
+[[github.aliases]]
+ssh = 'git@github.com:tact-app/trello.git'
+aliases = ['go.octolab.org/tact/inbox/trello']
+
+[[github.aliases]]
+ssh = 'git@github.com:withsparkle/fiddle.git'
+aliases = ['go.octolab.org/toolset/fiddle']
+
+[[github.aliases]]
+ssh = 'git@github.com:withsparkle/service.git'
+aliases = ['go.octolab.org/ecosystem/sparkle']
