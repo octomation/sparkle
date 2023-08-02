@@ -7,7 +7,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/gohugoio/hugo v0.119.0
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.4.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nleeper/goment v1.4.4
