@@ -19,7 +19,9 @@ list = [
   'kamilsk/godownloader',
   'kamilsk/go-tools',
   'kamilsk/golangci-lint',
+  'under-the-hood/docs',
   'under-the-hood/persona',
+  'under-the-hood/search',
 ]
 
 [github.exclude]
