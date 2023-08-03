@@ -1,10 +1,9 @@
-package daily_notes
+package diary
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/afero"
 	"go.octolab.org/safe"
@@ -43,11 +42,6 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 			System: fmt.Errorf("cannot decode config %w", err),
 		}
 	}
-
-	// normalize
-	cnf.Folder = strings.TrimSpace(cnf.Folder)
-	cnf.Format = strings.TrimSpace(cnf.Format)
-	cnf.Template = strings.TrimSpace(cnf.Template)
 
 	return cnf, nil
 }

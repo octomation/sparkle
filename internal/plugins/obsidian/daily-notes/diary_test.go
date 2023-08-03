@@ -1,4 +1,4 @@
-package daily_notes
+package diary
 
 import (
 	"fmt"
@@ -10,6 +10,8 @@ import (
 )
 
 func TestDiary_first(t *testing.T) {
+	trick := "2006-02-01"
+
 	t.Run("no files", func(t *testing.T) {
 		cnf := Config{
 			Folder: "diary",
@@ -18,10 +20,10 @@ func TestDiary_first(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		diary := New(cnf, WithSpecifiedFs(fs))
 
-		entry := diary.first()
-		path := entry.Day().Format("2006-02-01")
-		assert.False(t, entry.Day().IsZero())
-		assert.Equal(t, fmt.Sprintf("diary/%s.md", path), entry.Path())
+		record := diary.First()
+		path := record.Time().Format(trick)
+		assert.False(t, record.Time().IsZero())
+		assert.Equal(t, fmt.Sprintf("diary/%s.md", path), record.Path)
 	})
 
 	t.Run("no matched files", func(t *testing.T) {
@@ -39,14 +41,14 @@ func TestDiary_first(t *testing.T) {
 		}
 		diary := New(cnf, WithSpecifiedFs(fs))
 
-		entry := diary.first()
-		assert.False(t, entry.Day().IsZero())
+		record := diary.First()
+		assert.False(t, record.Time().IsZero())
 		{ // TODO:debt unexpected behavior of github.com/nleeper/goment
-			assert.Equal(t, "diary/2006.md", entry.Path())
+			assert.Equal(t, "diary/2006.md", record.Path)
 		}
 		// expected behavior, but inverted
-		path := entry.Day().Format("2006-02-01")
-		assert.NotEqual(t, fmt.Sprintf("diary/%s.md", path), entry.Path())
+		path := record.Time().Format(trick)
+		assert.NotEqual(t, fmt.Sprintf("diary/%s.md", path), record.Path)
 	})
 
 	t.Run("chronological order", func(t *testing.T) {
@@ -65,8 +67,8 @@ func TestDiary_first(t *testing.T) {
 		}
 		diary := New(cnf, WithSpecifiedFs(fs))
 
-		entry := diary.first()
-		assert.False(t, entry.Day().IsZero())
-		assert.Equal(t, "diary/2006-31-01.md", entry.Path())
+		record := diary.First()
+		assert.False(t, record.Time().IsZero())
+		assert.Equal(t, "diary/2006-31-01.md", record.Path)
 	})
 }

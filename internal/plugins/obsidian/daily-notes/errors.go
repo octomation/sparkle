@@ -1,4 +1,4 @@
-package daily_notes
+package diary
 
 import "errors"
 

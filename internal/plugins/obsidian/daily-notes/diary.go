@@ -1,4 +1,4 @@
-package daily_notes
+package diary
 
 import (
 	"fmt"
@@ -7,107 +7,97 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gohugoio/hugo/parser/pageparser"
 	"github.com/google/uuid"
-	"github.com/mitchellh/mapstructure"
 	"github.com/nleeper/goment"
 	"github.com/spf13/afero"
 	"go.octolab.org/safe"
 	"go.octolab.org/unsafe"
 
 	"go.octolab.org/ecosystem/sparkle/internal/pkg/errors"
+	"go.octolab.org/ecosystem/sparkle/internal/pkg/markdown"
 )
 
 const ext = ".md"
 
 func New(cnf Config, opts ...Option) *Diary {
-	diary := Diary{
+	diary := &Diary{
 		cnf: cnf,
 		ext: ext,
 		fs:  afero.NewOsFs(),
 	}
-	for _, opt := range opts {
-		opt(&diary)
+	for _, opt := range append(opts, normalize) {
+		opt(diary)
 	}
-
-	if cnf.Template != "" {
-		if filepath.Ext(cnf.Template) == "" {
-			cnf.Template += diary.ext
-		}
-		diary.tpl = Template{
-			path: cnf.Template,
-			fs:   diary.fs,
-		}
-	}
-	return &diary
+	return diary
 }
 
 type Diary struct {
 	cnf Config
 	ext string
-	tpl Template
 	fs  afero.Fs
 }
 
-func (d *Diary) Create(day time.Time, rewrite bool) (Entry, error) {
-	g, err := goment.New(day)
-	if err != nil {
-		return Entry{}, err // TODO: wrap
-	}
-	entry := d.entry(g)
-
-	_, err = d.fs.Stat(entry.path)
-	exists := !os.IsNotExist(err)
-	if exists && !rewrite {
-		return entry, nil
+func (d *Diary) Create(day time.Time, rewrite bool) (Record, error) {
+	g, _ := goment.New(day)
+	record := d.record(g)
+	_, err := d.fs.Stat(record.Path)
+	if err == nil && !rewrite {
+		return record, nil
 	}
 
 	flag := os.O_RDWR | os.O_CREATE
 	if rewrite {
 		flag |= os.O_TRUNC
 	}
-	f, err := d.fs.OpenFile(entry.path, flag, 0666)
+	file, err := d.fs.OpenFile(record.Path, flag, 0666)
 	if err != nil {
-		return entry, err // TODO: wrap
+		return record, errors.X{
+			User:   folderError,
+			System: fmt.Errorf("cannot open file %q: %w", record.Path, err),
+		}
 	}
-	defer safe.Close(f, unsafe.Ignore)
+	defer safe.Close(file, unsafe.Ignore)
 
-	structure, err := d.tpl.Structure()
+	template, err := d.template()
 	if err != nil {
-		return entry, err
+		return record, err
 	}
-	var note Note
-	if err := mapstructure.Decode(structure.FrontMatter, &note.Properties); err != nil {
-		return entry, err
-	}
-	note.Entry = entry
-	note.Content = structure.Content
-	note.Callbacks = []func(*Note){
+
+	note := Note{Document: template, Record: record}
+	note.Transformers = []func(*Note){
 		SetUID(uuid.New().String()),
-		SetAliases(fmt.Sprintf("Day %d", int(1+day.Sub(d.first().Day()).Hours()/24))),
+		SetAliases(
+			fmt.Sprintf(
+				"Day %d",
+				int(1+day.Sub(d.First().Time()).Hours()/24),
+			),
+		),
 		SetDate(day.Format(time.DateOnly)),
 		LinkWeek(), LinkPrev(), LinkNext(),
 	}
-	if err := note.Write(f); err != nil {
-		return entry, err
+	if err := note.SaveTo(file); err != nil {
+		return record, errors.X{
+			User:   folderError,
+			System: fmt.Errorf("cannot save file %q: %w", record.Path, err),
+		}
 	}
-	return entry, nil
+	return record, nil
 }
 
-func (d *Diary) entry(g *goment.Goment) Entry {
-	entry := Entry{day: g, path: g.Format(d.cnf.Format) + d.ext, format: d.cnf.Format}
-	if d.cnf.Folder != "" {
-		entry.path = filepath.Join(d.cnf.Folder, entry.path)
-	}
-	return entry
+func (d *Diary) First() Record {
+	return d.find(func(sup, iter *goment.Goment) bool { return iter.IsBefore(sup) })
 }
 
-func (d *Diary) first() Entry {
+func (d *Diary) Last() Record {
+	return d.find(func(sup, iter *goment.Goment) bool { return iter.IsAfter(sup) })
+}
+
+func (d *Diary) find(cmp func(sup, iter *goment.Goment) bool) Record {
 	now, _ := goment.New()
 	pattern := filepath.Join(d.cnf.Folder, "*"+d.ext)
 	matches, _ := afero.Glob(d.fs, pattern)
 	if len(matches) == 0 {
-		return d.entry(now)
+		return d.record(now)
 	}
 
 	// the algorithm provides chronological order of files, not lexicographical
@@ -118,64 +108,60 @@ func (d *Diary) first() Entry {
 		files[strings.TrimSuffix(filepath.Base(matches[i]), d.ext)] = matches[i]
 	}
 
-	first, found := new(goment.Goment), ""
+	day, found := new(goment.Goment), ""
 	for fname := range files {
 		g, err := goment.New(fname, d.cnf.Format)
 		if err != nil {
 			continue
 		}
 		if found == "" {
-			first = g
+			day = g
 			found = fname
 			continue
 		}
-		if g.IsBefore(first) {
-			first = g
+		if cmp(day, g) {
+			day = g
 			found = fname
 		}
 	}
 	if found == "" {
-		return d.entry(now)
+		return d.record(now)
 	}
-	return Entry{day: first, path: files[found], format: d.cnf.Format}
+	return Record{Day: *day, Path: files[found], Format: d.cnf.Format}
 }
 
-type Entry struct {
-	day    *goment.Goment
-	path   string
-	format string
+func (d *Diary) record(g *goment.Goment) Record {
+	record := Record{Day: *g, Path: g.Format(d.cnf.Format) + d.ext, Format: d.cnf.Format}
+	if d.cnf.Folder != "" {
+		record.Path = filepath.Join(d.cnf.Folder, record.Path)
+	}
+	return record
 }
 
-func (e Entry) Day() time.Time {
-	return e.day.ToTime()
-}
+func (d *Diary) template() (markdown.Document, error) {
+	empty := markdown.Document{
+		Properties: make(map[string]any),
+		Content:    nil,
+	}
+	if d.cnf.Template == "" {
+		return empty, nil
+	}
 
-func (e Entry) Path() string {
-	return e.path
-}
-
-type Template struct {
-	path string
-	fs   afero.Fs
-}
-
-func (tpl Template) Structure() (pageparser.ContentFrontMatter, error) {
-	var stub pageparser.ContentFrontMatter
-	f, err := tpl.fs.Open(tpl.path)
+	file, err := d.fs.Open(d.cnf.Template)
 	if err != nil {
-		return stub, errors.X{
+		return empty, errors.X{
 			User:   templateError,
-			System: fmt.Errorf("cannot load template %q: %w", tpl.path, err),
+			System: fmt.Errorf("cannot load template %q: %w", d.cnf.Template, err),
 		}
 	}
-	defer safe.Close(f, unsafe.Ignore)
+	defer safe.Close(file, unsafe.Ignore)
 
-	structure, err := pageparser.ParseFrontMatterAndContent(f)
-	if err != nil {
-		return stub, errors.X{
+	var doc markdown.Document
+	if err := markdown.LoadFrom(file, &doc); err != nil {
+		return empty, errors.X{
 			User:   templateError,
-			System: fmt.Errorf("cannot parse template %q: %w", tpl.path, err),
+			System: fmt.Errorf("cannot parse template %q: %w", d.cnf.Template, err),
 		}
 	}
-	return structure, nil
+	return doc, nil
 }

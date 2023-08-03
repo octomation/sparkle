@@ -30,6 +30,7 @@ func Diary() *cobra.Command {
 	var (
 		since   = time.Now().Format(time.DateOnly)
 		until   = time.Now().Add(xtime.Week).Format(time.DateOnly)
+		next    = false
 		rewrite = false
 	)
 	makeCmd := &cobra.Command{
@@ -43,17 +44,24 @@ func Diary() *cobra.Command {
 			}
 			journal := diary.New(config, diary.WithSpecifiedFs(fs))
 
-			since, err := time.Parse(time.DateOnly, since)
-			if err != nil {
-				return err
-			}
-			until, err := time.Parse(time.DateOnly, until)
-			if err != nil {
-				return err
+			var from, to time.Time
+			if next {
+				last := journal.Last().Time()
+				from = last.Add(xtime.Day)
+				to = from.Add(xtime.Week)
+			} else {
+				from, err = time.Parse(time.DateOnly, since)
+				if err != nil {
+					return err
+				}
+				to, err = time.Parse(time.DateOnly, until)
+				if err != nil {
+					return err
+				}
 			}
 
-			day := since
-			for !day.After(until) {
+			day := from
+			for !day.After(to) {
 				if _, err := journal.Create(day, rewrite); err != nil {
 					return err
 				}
@@ -65,6 +73,7 @@ func Diary() *cobra.Command {
 	flags := makeCmd.Flags()
 	flags.StringVarP(&since, "since", "", since, "start date")
 	flags.StringVarP(&until, "until", "", until, "end date")
+	flags.BoolVarP(&next, "next", "", next, "create next seven days")
 	flags.BoolVarP(&rewrite, "rewrite", "", rewrite, "rewrite existing files")
 
 	cmd.AddCommand(makeCmd)
