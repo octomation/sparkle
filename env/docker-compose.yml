@@ -10,7 +10,7 @@ services:
     command:
       - "--data-dir"
       - "/data"
-      - "--api-key=612fc8ac-ac81-4b79-8651-db55b2783698"
+      - "--api-key=${TYPESENSE_API_KEY}"
     restart: unless-stopped
 
 volumes:
