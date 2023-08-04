@@ -20,6 +20,7 @@ func New() *cobra.Command {
 	}
 
 	command.AddCommand(
+		sparkle.Search(),
 		sparkle.Stream(),
 		NewServer(),
 		NewClient(),
