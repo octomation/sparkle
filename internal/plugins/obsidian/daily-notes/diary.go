@@ -49,7 +49,7 @@ func (d *Diary) Create(day time.Time, rewrite bool) (Record, error) {
 	if rewrite {
 		flag |= os.O_TRUNC
 	}
-	file, err := d.fs.OpenFile(record.Path, flag, 0666)
+	file, err := d.fs.OpenFile(record.Path, flag, 0644)
 	if err != nil {
 		return record, errors.X{
 			User:   folderError,

@@ -17,8 +17,8 @@ func TestFile(t *testing.T) {
 foo: bar
 bar: baz
 ---
-# Baz`), 0666))
-	f, err := fs.OpenFile(name, os.O_RDWR, 0666)
+# Baz`), 0644))
+	f, err := fs.OpenFile(name, os.O_RDWR, 0644)
 	require.NoError(t, err)
 	expected := `---
 foo: bar

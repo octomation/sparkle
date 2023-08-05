@@ -37,7 +37,7 @@ func TestDiary_first(t *testing.T) {
 			"diary/2006-02.md",
 			"diary/2006.md",
 		} {
-			require.NoError(t, afero.WriteFile(fs, file, []byte{}, 0666))
+			require.NoError(t, afero.WriteFile(fs, file, []byte{}, 0644))
 		}
 		diary := New(cnf, WithSpecifiedFs(fs))
 
@@ -63,7 +63,7 @@ func TestDiary_first(t *testing.T) {
 			"diary/2006-03-02.md",
 			"diary/2006-31-01.md",
 		} {
-			require.NoError(t, afero.WriteFile(fs, file, []byte{}, 0666))
+			require.NoError(t, afero.WriteFile(fs, file, []byte{}, 0644))
 		}
 		diary := New(cnf, WithSpecifiedFs(fs))
 

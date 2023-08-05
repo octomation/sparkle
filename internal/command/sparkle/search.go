@@ -1,29 +1,21 @@
 package sparkle
 
 import (
-	"errors"
 	"fmt"
-	"io"
 	"os"
-	"path/filepath"
-	"strings"
+	"time"
 
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/typesense/typesense-go/typesense"
-	"github.com/typesense/typesense-go/typesense/api"
 	"go.octolab.org/pointer"
-	"go.octolab.org/safe"
-	"go.octolab.org/unsafe"
+
+	"go.octolab.org/ecosystem/sparkle/internal/service/search"
+	"go.octolab.org/ecosystem/sparkle/internal/service/search/schema"
+	"go.octolab.org/ecosystem/sparkle/internal/service/vault"
 )
 
 func Search() *cobra.Command {
-	const (
-		collection = "sparkles"
-		ext        = ".md"
-		limit      = 3
-	)
-
 	var (
 		apiKey = os.Getenv("TYPESENSE_API_KEY")
 		server = "http://localhost:8108"
@@ -37,33 +29,20 @@ func Search() *cobra.Command {
 				typesense.WithAPIKey(apiKey),
 				typesense.WithServer(server),
 			)
+			service := search.New(client)
 
-			params := &api.SearchCollectionParams{
-				Q:                   args[0],
-				QueryBy:             "content",
-				TypoTokensThreshold: pointer.ToInt(5),
-				UseCache:            pointer.ToBool(false),
-			}
-			result, err := client.Collection(collection).Documents().Search(params)
+			docs, err := service.Find(args[0])
 			if err != nil {
 				return err
 			}
-
-			if result.Hits == nil || len(*result.Hits) == 0 {
-				return errors.New("nothing found")
-			}
-
-			for _, item := range *result.Hits {
-				doc := *item.Document
-				fmt.Println(doc["id"], doc["path"])
-				if item.Highlights != nil {
-					for _, highlight := range *item.Highlights {
-						fmt.Println(
-							"\t",
-							pointer.ValueOfString(highlight.Field),
-							pointer.ValueOfString(highlight.Snippet),
-						)
-					}
+			for _, doc := range docs {
+				fmt.Println(doc.ID, ":\t", doc.Path, time.Unix(doc.UpdatedAt, 0).Format(time.RFC3339))
+				for _, highlight := range doc.Highlights {
+					fmt.Println(
+						"\t",
+						pointer.ValueOfString(highlight.Field),
+						pointer.ValueOfString(highlight.Snippet),
+					)
 				}
 			}
 			return nil
@@ -81,85 +60,29 @@ func Search() *cobra.Command {
 					typesense.WithAPIKey(apiKey),
 					typesense.WithServer(server),
 				)
+				service := search.New(client)
 
-				unsafe.DoSilent(client.Collection(collection).Delete())
-				schema := &api.CollectionSchema{
-					Name: collection,
-					Fields: []api.Field{
-						{
-							Name: "content",
-							Type: "string",
-						},
-						{
-							Name: "path",
-							Type: "string",
-						},
-					},
-				}
-				if _, err := client.Collections().Create(schema); err != nil {
+				if err := service.Migrate(true); err != nil {
 					return err
 				}
 
-				fs := afero.NewOsFs()
-				root := "."
-				files := make([]string, 0, 100)
-				err := afero.Walk(fs, root, func(path string, info os.FileInfo, err error) error {
-					if err != nil {
-						return err
-					}
-
-					if path == root {
-						return nil
-					}
-
-					depth := len(strings.Split(
-						strings.TrimPrefix(path, root),
-						string(filepath.Separator),
-					))
-					if depth > limit {
-						return filepath.SkipDir
-					}
-
-					if !info.IsDir() && filepath.Ext(path) == ext {
-						files = append(files, path)
-					}
-					return nil
-				})
+				notes, err := vault.New(afero.NewOsFs()).Notes(".")
 				if err != nil {
 					return err
 				}
 
-				type document struct {
-					ID      string `json:"id,omitempty"`
-					Path    string `json:"path"`
-					Content string `json:"content"`
-				}
-
-				docs := client.Collection(collection).Documents()
-				for _, name := range files {
-					file, err := os.Open(name)
-					if err != nil {
-						return err
-					}
-
-					doc, err := io.ReadAll(file)
-					if err != nil {
-						safe.Close(file, unsafe.Ignore)
-						return err
-					}
-					safe.Close(file, unsafe.Ignore)
-
-					idx, err := docs.Create(document{
-						Path:    name,
-						Content: string(doc),
+				docs := make([]schema.Sparkle, 0, len(notes))
+				for _, note := range notes {
+					docs = append(docs, schema.Sparkle{
+						ID:         note.ID(),
+						Path:       note.Path,
+						Properties: note.Properties,
+						Content:    note.Content(),
+						CreatedAt:  note.CreatedAt.Unix(),
+						UpdatedAt:  note.UpdatedAt.Unix(),
 					})
-					if err != nil {
-						return err
-					}
-					cmd.Println(idx["id"])
 				}
-
-				return nil
+				return service.Index(docs...)
 			},
 		},
 	)
