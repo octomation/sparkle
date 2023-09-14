@@ -84,7 +84,7 @@ func LinkWeek() func(*Note) {
 func LinkPrev() func(*Note) {
 	grep := regexp.MustCompile(`\[\[prev]]`)
 	return func(note *Note) {
-		replacement := fmt.Sprintf("[[%s|prev]]", note.Day.Add(-1, "d").Format(note.Format))
+		replacement := fmt.Sprintf("[[%s|prev]]", note.Yesterday().Format(note.Format))
 		note.Content = grep.ReplaceAll(note.Content, []byte(replacement))
 	}
 }
@@ -92,7 +92,7 @@ func LinkPrev() func(*Note) {
 func LinkNext() func(*Note) {
 	grep := regexp.MustCompile(`\[\[next]]`)
 	return func(note *Note) {
-		replacement := fmt.Sprintf("[[%s|next]]", note.Day.Add(+1, "d").Format(note.Format))
+		replacement := fmt.Sprintf("[[%s|next]]", note.Tomorrow().Format(note.Format))
 		note.Content = grep.ReplaceAll(note.Content, []byte(replacement))
 	}
 }
