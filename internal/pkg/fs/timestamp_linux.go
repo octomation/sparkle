@@ -13,5 +13,5 @@ func CreatedAt(info fs.FileInfo) time.Time {
 	if !ok {
 		return info.ModTime()
 	}
-	return time.Unix(sys.Ctimespec.Unix())
+	return time.Unix(sys.Ctim.Sec, sys.Ctim.Nsec)
 }
