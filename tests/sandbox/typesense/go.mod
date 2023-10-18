@@ -27,8 +27,8 @@ require (
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/tdewolff/parse/v2 v2.6.6 // indirect
 	github.com/yuin/goldmark v1.5.6 // indirect
-	golang.org/x/net v0.15.0 // indirect
-	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
