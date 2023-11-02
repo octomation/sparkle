@@ -5,7 +5,7 @@ go 1.21.3
 require (
 	connectrpc.com/connect v1.12.0
 	github.com/fatih/color v1.15.0
-	github.com/gohugoio/hugo v0.120.1
+	github.com/gohugoio/hugo v0.120.3
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.4.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
@@ -53,7 +53,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.17.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/tdewolff/parse/v2 v2.7.1 // indirect
+	github.com/tdewolff/parse/v2 v2.7.3 // indirect
 	github.com/tkuchiki/go-timezone v0.2.0 // indirect
 	github.com/yuin/goldmark v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
