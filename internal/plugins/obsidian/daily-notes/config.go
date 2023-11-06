@@ -53,6 +53,10 @@ type Config struct {
 	Template string `json:"template"`
 }
 
+func (cnf Config) Documentation() string {
+	return "https://help.obsidian.md/Plugins/Daily+notes"
+}
+
 func (cnf Config) Enabler() string {
 	return "Settings > Options > Core plugins > Daily notes"
 }

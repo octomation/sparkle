@@ -1,4 +1,13 @@
-[![Sparkle][social.preview]][preview.config]
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+            height="600px"
+            srcset="https://cdn.octolab.org/sparkle/concept_dark.png"/>
+    <img alt="concept"
+          height="600px"
+          src="https://cdn.octolab.org/sparkle/concept.png"/>
+  </picture>
+</div>
 
 #  ✨ Sparkle <sup>soon</sup>
 
@@ -7,7 +16,7 @@ Management platform.
 
 <p align="right">made with ❤️ for everyone by <a href="https://www.octolab.org/">OctoLab</a></p>
 
-[social.preview]:   https://cdn.octolab.org/sparkle/draft.png
+[social.preview]:   https://cdn.octolab.org/repo/go-service.png
 [preview.config]:   https://socialify.git.ci/octomation/go-service?description=1&font=Raleway&language=1&name=1&owner=1&pattern=Circuit%20Board&theme=Light
 [preview.fallback]: https://socialify.git.ci/octomation/go-service/image?description=1&font=Raleway&language=1&name=1&owner=1&pattern=Circuit%20Board&theme=Light
 
