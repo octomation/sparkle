@@ -8,7 +8,7 @@ require (
 	github.com/gohugoio/hugo v0.120.3
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.4.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nleeper/goment v1.4.4
 	github.com/spf13/afero v1.10.0
@@ -59,7 +59,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
