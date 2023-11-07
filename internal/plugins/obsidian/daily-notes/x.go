@@ -14,8 +14,9 @@ type Note struct {
 	markdown.Document
 	Record
 
-	Transformers []func(*Note)
-	ordered      struct {
+	Transformers    []func(*Note)
+	TransformersNew []func(*markdown.Document)
+	ordered         struct {
 		markdown.Core        `mapstructure:",squash" yaml:",inline"`
 		markdown.DiaryEntry  `mapstructure:",squash" yaml:",inline"`
 		markdown.MoodTracker `mapstructure:",squash" yaml:",inline"`
@@ -31,6 +32,12 @@ func (note *Note) SaveTo(file afero.File) error {
 	for _, transform := range note.Transformers {
 		transform(note)
 	}
+
+	// TODO:deps:refactoring improve configuration
+	for _, transform := range note.TransformersNew {
+		transform(&note.Document)
+	}
+
 	note.SetOrdered(note.ordered)
 
 	return markdown.SaveTo(file, note.Document)
@@ -69,15 +76,6 @@ func SetTags(tags ...string) func(*Note) {
 func SetDate(date string) func(*Note) {
 	return func(note *Note) {
 		note.ordered.Date = date
-	}
-}
-
-func LinkWeek() func(*Note) {
-	grep := regexp.MustCompile(`\[\[Weekly plans]]`)
-	return func(note *Note) {
-		year, week := note.Day.ToTime().ISOWeek()
-		replacement := fmt.Sprintf("[[Week %d, %d]]", week, year)
-		note.Content = grep.ReplaceAll(note.Content, []byte(replacement))
 	}
 }
 

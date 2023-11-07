@@ -17,6 +17,8 @@ func TestLoadConfig(t *testing.T) {
 			Folder:   "path/to/daily/notes",
 			Format:   "DD.MM.YYYY",
 			Template: "path/to/template.md",
+
+			enabled: true,
 		}
 		fs := afero.NewMemMapFs()
 		r := bytes.NewBuffer(nil)

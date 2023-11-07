@@ -37,7 +37,13 @@ type Diary struct {
 	fs  afero.Fs
 }
 
-func (d *Diary) Create(day time.Time, rewrite bool) (Record, error) {
+func (d *Diary) Create(
+	day time.Time,
+	transformers ...func(*goment.Goment) func(*markdown.Document),
+) (Record, error) {
+	// TODO:feat support --rewrite, --merge, --ignore strategies and `unknown` err by default
+	rewrite := true
+
 	g, _ := goment.New(day)
 	record := d.record(g)
 	_, err := d.fs.Stat(record.Path)
@@ -73,8 +79,14 @@ func (d *Diary) Create(day time.Time, rewrite bool) (Record, error) {
 			),
 		),
 		SetDate(day.Format(time.DateOnly)),
-		LinkWeek(), LinkPrev(), LinkNext(),
+		LinkPrev(), LinkNext(),
 	}
+
+	// TODO:deps:refactoring improve configuration
+	for _, fn := range transformers {
+		note.TransformersNew = append(note.TransformersNew, fn(g))
+	}
+
 	if err := note.SaveTo(file); err != nil {
 		return record, errors.X{
 			User:   folderError,

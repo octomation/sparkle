@@ -43,6 +43,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 		}
 	}
 
+	cnf.enabled = true
 	return cnf, nil
 }
 
@@ -51,35 +52,41 @@ type Config struct {
 	Folder   string `json:"folder"`
 	Format   string `json:"format"`
 	Template string `json:"template"`
+
+	enabled bool
 }
 
-func (cnf Config) Documentation() string {
+func (Config) Documentation() string {
 	return "https://help.obsidian.md/Plugins/Daily+notes"
 }
 
-func (cnf Config) Enabler() string {
+func (Config) Enabler() string {
 	return "Settings > Options > Core plugins > Daily notes"
 }
 
-func (cnf Config) Section() string {
+func (cnf Config) IsEnabled() bool {
+	return cnf.enabled
+}
+
+func (Config) Section() string {
 	return "Settings > Core plugins > Daily notes"
 }
 
-func (cnf Config) AutorunOptionPath() string {
+func (Config) AutorunOptionPath() string {
 	return "> Open daily note on startup"
 }
 
-func (cnf Config) FolderOptionPath() string {
+func (Config) FolderOptionPath() string {
 	return "> New file location"
 }
 
 // FormatOptionPath returns the path to the option
 // that allows to change the date format.
 // See https://momentjs.com/docs/#/displaying/format/.
-func (cnf Config) FormatOptionPath() string {
+func (Config) FormatOptionPath() string {
 	return "> Date format"
 }
 
-func (cnf Config) TemplateOptionPath() string {
+func (Config) TemplateOptionPath() string {
 	return "> Template file location"
 }

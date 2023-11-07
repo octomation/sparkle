@@ -3,11 +3,14 @@ package sparkle
 import (
 	"time"
 
+	"github.com/nleeper/goment"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	xtime "go.octolab.org/time"
 
+	"go.octolab.org/ecosystem/sparkle/internal/pkg/markdown"
 	diary "go.octolab.org/ecosystem/sparkle/internal/plugins/obsidian/daily-notes"
+	"go.octolab.org/ecosystem/sparkle/internal/plugins/obsidian/periodic-notes"
 )
 
 func Stream() *cobra.Command {
@@ -60,9 +63,21 @@ func Diary() *cobra.Command {
 				}
 			}
 
+			// TODO:deps:refactoring improve configuration
+			cnf, err := periodic.LoadConfig(fs)
+			if err != nil {
+				return err
+			}
+			transformers := []func(*goment.Goment) func(*markdown.Document){
+				periodic.LinkRelatives(cnf.Weekly),
+				periodic.LinkRelatives(cnf.Monthly),
+				periodic.LinkRelatives(cnf.Quarterly),
+				periodic.LinkRelatives(cnf.Yearly),
+			}
+
 			day := from
 			for !day.After(to) {
-				if _, err := journal.Create(day, rewrite); err != nil {
+				if _, err := journal.Create(day, transformers...); err != nil {
 					return err
 				}
 				day = day.Add(xtime.Day)
