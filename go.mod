@@ -5,7 +5,7 @@ go 1.21.3
 require (
 	connectrpc.com/connect v1.12.0
 	github.com/BurntSushi/toml v1.3.2
-	github.com/fatih/color v1.15.0
+	github.com/fatih/color v1.16.0
 	github.com/gohugoio/hugo v0.120.3
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.4.0
@@ -59,7 +59,7 @@ require (
 	github.com/yuin/goldmark v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
