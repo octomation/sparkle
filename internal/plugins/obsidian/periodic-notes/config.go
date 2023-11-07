@@ -62,7 +62,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 		}
 	}
 
-	cnf.enabled = true
+	cnf.Enabled = true
 	return cnf, nil
 }
 
@@ -76,7 +76,7 @@ type Config struct {
 	Quarterly                     Period `json:"quarterly"`
 	Yearly                        Period `json:"yearly"`
 
-	enabled bool
+	Enabled bool
 }
 
 type Period struct {
@@ -92,10 +92,6 @@ func (Config) Documentation() string {
 
 func (Config) Enabler() string {
 	return "Settings > Options > Community plugins > Installed plugins > Periodic Notes"
-}
-
-func (cnf Config) IsEnabled() bool {
-	return cnf.enabled
 }
 
 func (Config) Section() string {

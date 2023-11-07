@@ -43,7 +43,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 		}
 	}
 
-	cnf.enabled = true
+	cnf.Enabled = true
 	return cnf, nil
 }
 
@@ -53,7 +53,7 @@ type Config struct {
 	Format   string `json:"format"`
 	Template string `json:"template"`
 
-	enabled bool
+	Enabled bool
 }
 
 func (Config) Documentation() string {
@@ -62,10 +62,6 @@ func (Config) Documentation() string {
 
 func (Config) Enabler() string {
 	return "Settings > Options > Core plugins > Daily notes"
-}
-
-func (cnf Config) IsEnabled() bool {
-	return cnf.enabled
 }
 
 func (Config) Section() string {

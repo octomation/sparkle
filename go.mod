@@ -4,6 +4,7 @@ go 1.21.3
 
 require (
 	connectrpc.com/connect v1.12.0
+	github.com/BurntSushi/toml v1.3.2
 	github.com/fatih/color v1.15.0
 	github.com/gohugoio/hugo v0.120.3
 	github.com/golang/mock v1.6.0

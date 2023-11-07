@@ -18,7 +18,7 @@ func TestLoadConfig(t *testing.T) {
 			Format:   "DD.MM.YYYY",
 			Template: "path/to/template.md",
 
-			enabled: true,
+			Enabled: true,
 		}
 		fs := afero.NewMemMapFs()
 		r := bytes.NewBuffer(nil)
