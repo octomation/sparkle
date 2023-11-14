@@ -49,7 +49,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 	}
 	if err != nil {
 		return cnf, errors.X{
-			User:   configError,
+			User:   errConfig,
 			System: fmt.Errorf("cannot load config %w", err),
 		}
 	}
@@ -57,7 +57,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 
 	if err := json.NewDecoder(f).Decode(&cnf); err != nil {
 		return cnf, errors.X{
-			User:   configError,
+			User:   errConfig,
 			System: fmt.Errorf("cannot decode config %w", err),
 		}
 	}

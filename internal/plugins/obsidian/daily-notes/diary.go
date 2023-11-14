@@ -58,7 +58,7 @@ func (d *Diary) Create(
 	file, err := d.fs.OpenFile(record.Path, flag, 0644)
 	if err != nil {
 		return record, errors.X{
-			User:   folderError,
+			User:   errFolder,
 			System: fmt.Errorf("cannot open file %q: %w", record.Path, err),
 		}
 	}
@@ -89,7 +89,7 @@ func (d *Diary) Create(
 
 	if err := note.SaveTo(file); err != nil {
 		return record, errors.X{
-			User:   folderError,
+			User:   errFolder,
 			System: fmt.Errorf("cannot save file %q: %w", record.Path, err),
 		}
 	}
@@ -162,7 +162,7 @@ func (d *Diary) template() (markdown.Document, error) {
 	file, err := d.fs.Open(d.cnf.Template)
 	if err != nil {
 		return empty, errors.X{
-			User:   templateError,
+			User:   errTemplate,
 			System: fmt.Errorf("cannot load template %q: %w", d.cnf.Template, err),
 		}
 	}
@@ -171,7 +171,7 @@ func (d *Diary) template() (markdown.Document, error) {
 	var doc markdown.Document
 	if err := markdown.LoadFrom(file, &doc); err != nil {
 		return empty, errors.X{
-			User:   templateError,
+			User:   errTemplate,
 			System: fmt.Errorf("cannot parse template %q: %w", d.cnf.Template, err),
 		}
 	}
