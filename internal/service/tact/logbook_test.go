@@ -2,7 +2,6 @@ package tact
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -10,8 +9,6 @@ import (
 func TestLogbook_Log(t *testing.T) {
 	tests := map[string]struct {
 		logs   []string
-		total  time.Duration
-		breaks time.Duration
 		report string
 	}{
 		"long internal interval": {
@@ -21,9 +18,44 @@ func TestLogbook_Log(t *testing.T) {
 				"- 14:00 / 15:00 - micro-tasking / 🥱",
 				"- 15:00 / 2h15m / 22:15 - focusing on the goal / 😤",
 			},
-			total:  10 * time.Hour,
-			breaks: 2*time.Hour + 30*time.Minute,
 			report: "10h total / 2h30m break 25% / 7h30m work 75%",
+		},
+		"long working day": {
+			logs: []string{
+				"- 11:15 / 12:15 - day planning / 🤔",
+				"- 12:15 / 13:15 - task solving / 😤",
+				"- 13:45 / 45m / 16:30 - reading the book / 😤",
+				"- 17:00 / 1h / 21:00 - focusing on the goal / 😬",
+				"- 21:00 / 22:00 - solve critical issue / 😬",
+				"- 23:00 / 01:15 - write tests / 🫠",
+			},
+			report: "14h total / 3h45m break 27% / 10h15m work 73%",
+		},
+		"late start": {
+			logs: []string{
+				"- 21:00 / 22:00 - solve critical issue / 😬",
+				"- 23:00 / 01:15 - write tests / 🫠",
+				"- 01:30 / 03:00 - focusing on the goal / 😤",
+			},
+			report: "6h total / 1h15m break 21% / 4h45m work 79%",
+		},
+		"two days run": {
+			logs: []string{
+				"- 11:15 / 12:15 - day planning / 🤔",
+				"- 12:15 / 13:15 - task solving / 😤",
+				"- 13:45 / 45m / 16:30 - reading the book / 😤",
+				"- 17:00 / 1h / 21:00 - focusing on the goal / 😬",
+				"- 21:00 / 22:00 - solve critical issue / 😬",
+				"- 23:00 / 01:15 - write tests / 🫠",
+				"- 01:30 / 08:00 - focusing on the goal / 😤",
+				"- 11:15 / 12:15 - day planning / 🤔",
+				"- 12:15 / 13:15 - task solving / 😤",
+				"- 13:45 / 45m / 16:30 - reading the book / 😤",
+				"- 17:00 / 1h / 21:00 - focusing on the goal / 😬",
+				"- 21:00 / 22:00 - solve critical issue / 😬",
+				"- 23:00 / 01:15 - write tests / 🫠",
+			},
+			report: "38h total / 11h break 29% / 27h work 71%",
 		},
 	}
 
@@ -33,8 +65,6 @@ func TestLogbook_Log(t *testing.T) {
 			for _, record := range test.logs {
 				assert.NoError(t, journal.Log(record))
 			}
-			assert.Equal(t, test.total, journal.Total())
-			assert.Equal(t, test.breaks, journal.Breaks())
 			assert.Equal(t, test.report, journal.String())
 		})
 	}
