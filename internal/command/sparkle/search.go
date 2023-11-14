@@ -10,9 +10,9 @@ import (
 	"github.com/typesense/typesense-go/typesense"
 	"go.octolab.org/pointer"
 
+	"go.octolab.org/ecosystem/sparkle/internal/service/playbook"
 	"go.octolab.org/ecosystem/sparkle/internal/service/search"
 	"go.octolab.org/ecosystem/sparkle/internal/service/search/schema"
-	"go.octolab.org/ecosystem/sparkle/internal/service/vault"
 )
 
 func Search() *cobra.Command {
@@ -66,7 +66,7 @@ func Search() *cobra.Command {
 					return err
 				}
 
-				notes, err := vault.New(afero.NewOsFs()).Notes(".")
+				notes, err := playbook.New(afero.NewOsFs()).Notes(".")
 				if err != nil {
 					return err
 				}
