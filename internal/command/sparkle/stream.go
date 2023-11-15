@@ -68,11 +68,12 @@ func Diary() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			transformers := []func(*goment.Goment) func(*markdown.Document){
+			transformers := []func(*goment.Goment) markdown.Transformer{
 				periodic.LinkRelatives(cnf.Weekly),
 				periodic.LinkRelatives(cnf.Monthly),
 				periodic.LinkRelatives(cnf.Quarterly),
 				periodic.LinkRelatives(cnf.Yearly),
+				periodic.LinkSiblings(cnf.Daily),
 			}
 
 			day := from

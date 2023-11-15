@@ -3,7 +3,6 @@ package calendar
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/nleeper/goment"
@@ -13,29 +12,27 @@ import (
 
 const ext = ".md"
 
-func stub(*goment.Goment) func(*markdown.Document) {
+func stub(*goment.Goment) markdown.Transformer {
 	return func(*markdown.Document) {}
 }
 
 // LinkWeek replaces a template link with the actual link to the weekly note.
 // E.g., `[[Weekly plans]]` → `[[Week 1, 2006]]`.
-func LinkWeek(cnf Config) func(day *goment.Goment) func(*markdown.Document) {
+func LinkWeek(cnf Config) func(day *goment.Goment) markdown.Transformer {
+	if !cnf.Enabled {
+		return stub
+	}
 	name := strings.TrimSuffix(filepath.Base(cnf.WeeklyNoteTemplate), ext)
 	if name == "" {
 		return stub
 	}
-	r, err := regexp.Compile(regexp.QuoteMeta(fmt.Sprintf("[[%s]]", name)))
-	if err != nil {
-		return stub
-	}
 
-	format := cnf.WeeklyNoteFormat
-	return func(day *goment.Goment) func(*markdown.Document) {
+	return func(day *goment.Goment) markdown.Transformer {
+		old := fmt.Sprintf("[[%s]]", name)
+		byNew := fmt.Sprintf("[[%s]]", day.Format(cnf.WeeklyNoteFormat))
 		return func(note *markdown.Document) {
-			note.Content = r.ReplaceAll(
-				note.Content,
-				[]byte(fmt.Sprintf("[[%s]]", day.Format(format))),
-			)
+			replace := markdown.Replacer(note, strings.ReplaceAll)
+			replace(old, byNew)
 		}
 	}
 }

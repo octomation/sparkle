@@ -74,10 +74,10 @@ func Search() *cobra.Command {
 				docs := make([]schema.Sparkle, 0, len(notes))
 				for _, note := range notes {
 					docs = append(docs, schema.Sparkle{
-						ID:         note.ID(),
+						ID:         note.Document.ID(),
 						Path:       note.Path,
-						Properties: note.Properties,
-						Content:    note.Content(),
+						Properties: note.Document.Properties(),
+						Content:    note.Document.Content(),
 						CreatedAt:  note.CreatedAt.Unix(),
 						UpdatedAt:  note.UpdatedAt.Unix(),
 					})

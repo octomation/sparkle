@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/nleeper/goment"
 	"github.com/spf13/afero"
 	"go.octolab.org/safe"
@@ -39,9 +38,10 @@ type Diary struct {
 
 func (d *Diary) Create(
 	day time.Time,
-	transformers ...func(*goment.Goment) func(*markdown.Document),
+	transformers ...func(*goment.Goment) markdown.Transformer,
 ) (Record, error) {
-	// TODO:feat support --rewrite, --merge, --ignore strategies and `unknown` err by default
+	// TODO:feat support --rewrite, --merge, --ignore strategies
+	//  and `unknown` err by default
 	rewrite := true
 
 	g, _ := goment.New(day)
@@ -70,22 +70,19 @@ func (d *Diary) Create(
 	}
 
 	note := Note{Document: template, Record: record}
-	note.Transformers = []func(*Note){
-		SetUID(uuid.New().String()),
-		SetAliases(
+	for _, fn := range transformers {
+		note.Transformers = append(note.Transformers, fn(g))
+	}
+	note.Transformers = append(note.Transformers,
+		markdown.RegenerateID,
+		markdown.SetAliases(
 			fmt.Sprintf(
 				"Day %d",
 				int(1+day.Sub(d.First().Time()).Hours()/24),
 			),
 		),
-		SetDate(day.Format(time.DateOnly)),
-		LinkPrev(), LinkNext(),
-	}
-
-	// TODO:deps:refactoring improve configuration
-	for _, fn := range transformers {
-		note.TransformersNew = append(note.TransformersNew, fn(g))
-	}
+		markdown.SetDate(day.Format(time.DateOnly)),
+	)
 
 	if err := note.SaveTo(file); err != nil {
 		return record, errors.X{
@@ -151,10 +148,7 @@ func (d *Diary) record(g *goment.Goment) Record {
 }
 
 func (d *Diary) template() (markdown.Document, error) {
-	empty := markdown.Document{
-		Properties: make(map[string]any),
-		Content:    nil,
-	}
+	var empty markdown.Document
 	if d.cnf.Template == "" {
 		return empty, nil
 	}

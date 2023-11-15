@@ -1,44 +1,34 @@
 package markdown
 
 import (
-	"bytes"
-	"os"
+	"io"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.octolab.org/unsafe"
 )
 
 func TestFile(t *testing.T) {
-	const name = "file.md"
 	fs := afero.NewMemMapFs()
-	require.NoError(t, afero.WriteFile(fs, name, []byte(`---
-foo: bar
-bar: baz
----
-# Baz`), 0644))
-	f, err := fs.OpenFile(name, os.O_RDWR, 0644)
+	f, err := fs.Create("test.md")
 	require.NoError(t, err)
-	expected := `---
-foo: bar
----
-# Baz`
 
 	var doc Document
-	require.NoError(t, LoadFrom(f, &doc))
-	assert.Equal(t, map[string]any{"foo": "bar", "bar": "baz"}, doc.Properties)
-	assert.Equal(t, []byte("# Baz"), doc.Content)
+	reminder := strings.TrimSuffix(time.RFC3339, "Z07:00")
+	doc.head.Set(KeyCreatedAt, time.RFC3339)
+	doc.head.Set(KeyAliases, []string{"alias1"})
+	doc.head.Set(KeyTags, []string{"tag1", "tag2"})
+	doc.head.Set(KeyRemindMe, reminder)
 
-	delete(doc.Properties, "bar")
 	assert.NoError(t, SaveTo(f, doc))
-	assert.NoError(t, f.Close())
-
-	f, err = fs.Open("file.md")
-	require.NoError(t, err)
-	buf := bytes.NewBuffer(nil)
-	_, err = buf.ReadFrom(f)
-	assert.NoError(t, err)
-	assert.Equal(t, expected, buf.String())
-	assert.NoError(t, f.Close())
+	unsafe.DoSilent(f.Seek(0, io.SeekStart))
+	assert.NoError(t, LoadFrom(f, &doc))
+	assert.Len(t, doc.head.Get(KeyAliases), 1)
+	assert.Len(t, doc.head.Get(KeyTags), 2)
+	assert.Equal(t, time.RFC3339, doc.head.Get(KeyCreatedAt))
+	assert.Equal(t, reminder, doc.head.Get(KeyRemindMe))
 }
