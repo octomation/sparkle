@@ -16,11 +16,12 @@ type FrontMatter struct {
 	InternalID  uuid.UUID `json:"uid" yaml:"uid"`
 	ExternalID  []string  `json:"xid" yaml:"xid"`
 	Aliases     []string  `json:"aliases" yaml:"aliases"`
+	RelatedTo   []string  `json:"related_to" yaml:"related to"`
 	Tags        []string  `json:"tags" yaml:"tags"`
 	Topics      []string  `json:"topics" yaml:"topics"`
 	Description string    `json:"description" yaml:"description"`
 	URL         string    `json:"url" yaml:"url"`
-	Homepage    string    `json:"homepage,omitempty" yaml:"homepage,omitempty"`
+	Homepage    string    `json:"homepage" yaml:"homepage"`
 }
 
 type Markdown struct {
