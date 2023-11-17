@@ -1,0 +1,6 @@
+[service]
+license = "65541023-fb3e-4107-ac8e-158fc2e64a18"
+
+[sparkle]
+path = "./testdata"
+file = "sparkle.toml"

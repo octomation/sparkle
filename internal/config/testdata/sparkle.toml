@@ -1,9 +1,4 @@
-[service]
-license = "65541023-fb3e-4107-ac8e-158fc2e64a18"
-
-
-
-[service.plugins.obsidian.calendar]
+[obsidian.plugins.calendar]
 enabled = true
 localeOverride = "system-default"
 shouldConfirmBeforeCreate = true
@@ -15,7 +10,7 @@ weeklyNoteTemplate = "4. Resources/Templates/Weekly plans"
 weeklyNoteFolder = "1. Stream/Tactic"
 
 
-[service.plugins.obsidian.daily-notes]
+[obsidian.plugins.daily-notes]
 enabled = true
 autorun = false
 format = "YYYY-MM-DD"
@@ -23,37 +18,37 @@ folder = "1. Stream/Diary"
 template = "4. Resources/Templates/Daily notes"
 
 
-[service.plugins.obsidian.periodic-notes]
+[obsidian.plugins.periodic-notes]
 enabled = true
 showGettingStartedBanner = true
 hasMigratedDailyNoteSettings = true
 hasMigratedWeeklyNoteSettings = true
 
-[service.plugins.obsidian.periodic-notes.daily]
+[obsidian.plugins.periodic-notes.daily]
 enabled = true
 format = "YYYY-MM-DD"
 folder = "1. Stream/Diary"
 template = "4. Resources/Templates/Daily notes"
 
-[service.plugins.obsidian.periodic-notes.weekly]
+[obsidian.plugins.periodic-notes.weekly]
 enabled = true
-format = "[Week] W, YYYY"
+format = "GGGG-[W]WW"
 folder = "1. Stream/Tactic"
 template = "4. Resources/Templates/Weekly plans"
 
-[service.plugins.obsidian.periodic-notes.monthly]
+[obsidian.plugins.periodic-notes.monthly]
 enabled = true
-format = "MMMM, YYYY"
+format = "YYYY-MM"
 template = "4. Resources/Templates/Monthly plans"
 folder = "1. Stream/Tactic"
 
-[service.plugins.obsidian.periodic-notes.quarterly]
+[obsidian.plugins.periodic-notes.quarterly]
 enabled = true
-format = "[Q]Q, YYYY"
+format = "YYYY-[Q]Q"
 template = "4. Resources/Templates/Quarterly plans"
 folder = "1. Stream/Tactic"
 
-[service.plugins.obsidian.periodic-notes.yearly]
+[obsidian.plugins.periodic-notes.yearly]
 enabled = true
 format = "YYYY"
 template = "4. Resources/Templates/Annual plans"
