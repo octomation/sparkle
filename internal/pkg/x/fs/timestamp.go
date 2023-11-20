@@ -1,6 +1,6 @@
 //go:build !linux && !unix && !darwin && !freebsd
 
-package fs
+package xfs
 
 import (
 	"io/fs"

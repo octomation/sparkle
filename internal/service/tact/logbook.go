@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"time"
 
-	xtime "go.octolab.org/ecosystem/sparkle/internal/pkg/time"
+	xtime "go.octolab.org/ecosystem/sparkle/internal/pkg/x/time"
 )
 
 type Logbook interface {

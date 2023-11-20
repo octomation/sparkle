@@ -1,6 +1,6 @@
-//go:build linux || unix
+//go:build darwin || freebsd
 
-package fs
+package xfs
 
 import (
 	"io/fs"
@@ -13,5 +13,5 @@ func CreatedAt(info fs.FileInfo) time.Time {
 	if !ok {
 		return info.ModTime()
 	}
-	return time.Unix(sys.Ctim.Sec, sys.Ctim.Nsec)
+	return time.Unix(sys.Birthtimespec.Unix())
 }

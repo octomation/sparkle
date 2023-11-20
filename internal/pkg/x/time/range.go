@@ -3,7 +3,7 @@ package xtime
 import (
 	"time"
 
-	xassert "go.octolab.org/ecosystem/sparkle/internal/pkg/assert"
+	xassert "go.octolab.org/ecosystem/sparkle/internal/pkg/x/assert"
 )
 
 func IsLinear(past, future time.Time, threshold time.Duration) (is bool, shift bool) {

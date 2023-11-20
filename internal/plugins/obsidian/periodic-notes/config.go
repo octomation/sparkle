@@ -9,7 +9,7 @@ import (
 	"go.octolab.org/safe"
 	"go.octolab.org/unsafe"
 
-	"go.octolab.org/ecosystem/sparkle/internal/pkg/errors"
+	xerrors "go.octolab.org/ecosystem/sparkle/internal/pkg/x/errors"
 )
 
 const config = ".obsidian/plugins/periodic-notes/data.json"
@@ -48,7 +48,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 		return cnf, nil
 	}
 	if err != nil {
-		return cnf, errors.X{
+		return cnf, xerrors.X{
 			User:   errConfig,
 			System: fmt.Errorf("cannot load config %w", err),
 		}
@@ -56,7 +56,7 @@ func LoadConfig(fs afero.Fs) (Config, error) {
 	defer safe.Close(f, unsafe.Ignore)
 
 	if err := json.NewDecoder(f).Decode(&cnf); err != nil {
-		return cnf, errors.X{
+		return cnf, xerrors.X{
 			User:   errConfig,
 			System: fmt.Errorf("cannot decode config %w", err),
 		}

@@ -1,4 +1,4 @@
-package errors
+package xerrors
 
 // X is a pair of errors, one for a user
 // and one for a developer.

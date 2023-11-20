@@ -8,8 +8,8 @@ import (
 	"go.octolab.org/safe"
 	"go.octolab.org/unsafe"
 
-	"go.octolab.org/ecosystem/sparkle/internal/pkg/fs"
 	"go.octolab.org/ecosystem/sparkle/internal/pkg/markdown"
+	xfs "go.octolab.org/ecosystem/sparkle/internal/pkg/x/fs"
 )
 
 const (
@@ -52,7 +52,7 @@ func (service *Service) Notes(root string) ([]Note, error) {
 			notes = append(notes, Note{
 				Document:  doc,
 				Path:      path,
-				CreatedAt: fs.CreatedAt(info),
+				CreatedAt: xfs.CreatedAt(info),
 				UpdatedAt: info.ModTime(),
 			})
 		}
