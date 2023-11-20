@@ -12,23 +12,6 @@ func TestLogbook_Log(t *testing.T) {
 		report string
 		desc   string
 	}{
-		"threshold challenge": {
-			logs: []string{
-				"- 09:30 / 10:00 - day planning and reflection / 🤔",
-				"- 10:00 / 5h / 00:00 - focused work on tasks / 🫠",
-			},
-			report: "14h30m total / 5h break 35% / 9h30m work 65%",
-			desc: `
-				There is a threshold to prevent incorrect inputs, e.g., from the past.
-				An example:
-					- 09:30 / 10:00 - day planning / 🤔
-					- 09:50 / 12:00 - hard work / 😤
-				A primitive solution for checking linearity has a disadvantage:
-					- 23:00 / 01:00 - hard work / 😤
-				From "23:00" >> To "01:00" because they are parsed for the same day.
-				To handle this case, we must define a work time threshold.
-			`,
-		},
 		"long breaks between actions": {
 			logs: []string{
 				"- 09:15 / 10:00 - day planning / 🤔",
@@ -82,11 +65,28 @@ func TestLogbook_Log(t *testing.T) {
 			},
 			report: "38h total / 13h15m break 35% / 24h45m work 65%",
 		},
+		"threshold challenge": {
+			logs: []string{
+				"- 09:30 / 10:00 - day planning and reflection / 🤔",
+				"- 10:00 / 5h / 00:00 - focused work on tasks / 🫠",
+			},
+			report: "14h30m total / 5h break 35% / 9h30m work 65%",
+			desc: `
+				There is a threshold to prevent incorrect inputs, e.g., from the past.
+				An example:
+					- 09:30 / 10:00 - day planning / 🤔
+					- 09:50 / 12:00 - hard work / 😤
+				A primitive solution for checking linearity has a disadvantage:
+					- 23:00 / 01:00 - hard work / 😤
+				From "23:00" >> To "01:00" because they are parsed for the same day.
+				To handle this case, we must define a work time threshold.
+			`,
+		},
 	}
 
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
-			journal := Logbook{}
+			journal := NewLinearJournal()
 			for _, record := range test.logs {
 				assert.NoError(t, journal.Log(record))
 			}

@@ -3,11 +3,46 @@ package tact
 import (
 	"fmt"
 	"regexp"
-	"sync"
 	"time"
 
 	xtime "go.octolab.org/ecosystem/sparkle/internal/pkg/time"
 )
+
+type Logbook interface {
+	fmt.Stringer
+
+	Log(string) error
+	Total() time.Duration
+}
+
+func NewBulletJournal() Logbook {
+	panic("not implemented yet, but see https://bulletjournal.com/")
+}
+
+func NewLinearJournal(opts ...LinearOption) Logbook {
+	journal := &linear{
+		format:    xtime.Kitchen,
+		threshold: xtime.HalfDay,
+	}
+	for _, option := range opts {
+		option(journal)
+	}
+	return journal
+}
+
+type LinearOption func(*linear)
+
+func WithLinearFormat(format string) LinearOption {
+	return func(log *linear) {
+		log.format = format
+	}
+}
+
+func WithLinearThreshold(threshold time.Duration) LinearOption {
+	return func(log *linear) {
+		log.threshold = threshold
+	}
+}
 
 const (
 	_ = iota
@@ -21,13 +56,8 @@ var (
 	zero = regexp.MustCompile(`(\D)0[m,s]`) // 12H
 )
 
-func NewLogbook(format string, threshold time.Duration) *Logbook {
-	return &Logbook{format: format, threshold: threshold}
-}
-
-type Logbook struct {
+type linear struct {
 	// config
-	init      sync.Once
 	format    string
 	threshold time.Duration
 
@@ -39,16 +69,7 @@ type Logbook struct {
 	breaks time.Duration
 }
 
-func (log *Logbook) Log(record string) error {
-	log.init.Do(func() {
-		if log.format == "" {
-			log.format = xtime.Kitchen
-		}
-		if log.threshold == 0 {
-			log.threshold = xtime.HalfDay
-		}
-	})
-
+func (log *linear) Log(record string) error {
 	if log.isDeactivated() || record == "" {
 		return nil
 	}
@@ -127,11 +148,11 @@ func (log *Logbook) Log(record string) error {
 	return nil
 }
 
-func (log *Logbook) Total() time.Duration {
+func (log *linear) Total() time.Duration {
 	return log.end.Sub(log.start)
 }
 
-func (log *Logbook) String() string {
+func (log *linear) String() string {
 	total := log.Total()
 	if total == 0 {
 		return ""
@@ -147,7 +168,7 @@ func (log *Logbook) String() string {
 	)
 }
 
-func (*Logbook) clean(d time.Duration) string {
+func (*linear) clean(d time.Duration) string {
 	base := d.String()
 	iter := zero.ReplaceAllString(base, "$1")
 	for iter != base {
@@ -157,10 +178,10 @@ func (*Logbook) clean(d time.Duration) string {
 	return iter
 }
 
-func (log *Logbook) isActivated() bool {
+func (log *linear) isActivated() bool {
 	return log.state == activated
 }
 
-func (log *Logbook) isDeactivated() bool {
+func (log *linear) isDeactivated() bool {
 	return log.state == deactivated
 }

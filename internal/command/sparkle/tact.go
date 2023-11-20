@@ -29,7 +29,7 @@ func Logbook() *cobra.Command {
 		Use:  "calculate",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			journal := new(tact.Logbook)
+			journal := tact.NewLinearJournal()
 			scanner := bufio.NewScanner(cmd.InOrStdin())
 			scanner.Split(bufio.ScanLines)
 			for scanner.Scan() {
