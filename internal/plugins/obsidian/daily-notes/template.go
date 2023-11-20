@@ -10,6 +10,8 @@ import (
 	"go.octolab.org/ecosystem/sparkle/internal/pkg/markdown"
 )
 
+const ext = ".md"
+
 func stub(*goment.Goment) markdown.Transformer {
 	return func(*markdown.Document) {}
 }

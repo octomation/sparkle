@@ -6,28 +6,30 @@ import (
 	"github.com/nleeper/goment"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	xtime "go.octolab.org/time"
 
 	"go.octolab.org/ecosystem/sparkle/internal/pkg/markdown"
+	xtime "go.octolab.org/ecosystem/sparkle/internal/pkg/x/time"
 	diary "go.octolab.org/ecosystem/sparkle/internal/plugins/obsidian/daily-notes"
 	"go.octolab.org/ecosystem/sparkle/internal/plugins/obsidian/periodic-notes"
 )
 
 func Stream() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "stream",
+		Use:  "stream category",
+		Args: cobra.NoArgs,
 	}
-
 	cmd.AddCommand(
 		Diary(),
+		Plans(),
 	)
-
 	return cmd
 }
 
 func Diary() *cobra.Command {
+	fs := afero.NewOsFs()
 	cmd := &cobra.Command{
-		Use: "diary",
+		Use:  "diary command",
+		Args: cobra.NoArgs,
 	}
 
 	var (
@@ -37,10 +39,9 @@ func Diary() *cobra.Command {
 		rewrite = false
 	)
 	makeCmd := &cobra.Command{
-		Use:  "make",
+		Use:  "make [--since=YYYY-MM-DD] [--until=YYYY-MM-DD] [--rewrite]",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fs := afero.NewOsFs()
 			config, err := diary.LoadConfig(fs)
 			if err != nil {
 				return err
@@ -73,7 +74,7 @@ func Diary() *cobra.Command {
 				periodic.LinkRelatives(cnf.Monthly),
 				periodic.LinkRelatives(cnf.Quarterly),
 				periodic.LinkRelatives(cnf.Yearly),
-				periodic.LinkSiblings(cnf.Daily),
+				periodic.LinkSiblings(cnf.Daily, periodic.LookupDays),
 			}
 
 			day := from
@@ -89,8 +90,102 @@ func Diary() *cobra.Command {
 	flags := makeCmd.Flags()
 	flags.StringVarP(&since, "since", "", since, "start date")
 	flags.StringVarP(&until, "until", "", until, "end date")
-	flags.BoolVarP(&next, "next", "", next, "create next seven days")
 	flags.BoolVarP(&rewrite, "rewrite", "", rewrite, "rewrite existing files")
+
+	cmd.AddCommand(makeCmd)
+
+	return cmd
+}
+
+func Plans() *cobra.Command {
+	fs := afero.NewOsFs()
+	cmd := &cobra.Command{
+		Use:  "plans command",
+		Args: cobra.NoArgs,
+	}
+
+	var (
+		week    bool
+		month   bool
+		quarter bool
+		year    bool
+		next    bool
+	)
+	makeCmd := &cobra.Command{
+		Use:  "make [--next] {--week --month --quarter --year}",
+		Args: cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			config, err := periodic.LoadConfig(fs)
+			if err != nil {
+				return err
+			}
+			planner := periodic.New(
+				config,
+				periodic.WithSpecifiedFs(fs),
+				periodic.WithTransformers(
+					periodic.UpdateAliases(),
+					// we don't know cascade relations
+					// and have to link all relatives
+					periodic.LinkRelatives(config.Weekly),
+					periodic.LinkRelatives(config.Monthly),
+					periodic.LinkRelatives(config.Quarterly),
+					periodic.LinkRelatives(config.Yearly),
+				),
+			)
+
+			shift := func(ref time.Time, fn func(time.Time) time.Time) time.Time {
+				if next {
+					return fn(ref)
+				}
+				return ref
+			}
+
+			now := time.Now()
+			if week {
+				_, err := planner.Week(
+					shift(now, xtime.NextWeek),
+					periodic.LinkSiblings(config.Weekly, periodic.LookupWeeks),
+				)
+				if err != nil {
+					return err
+				}
+			}
+			if month {
+				_, err := planner.Month(
+					shift(now, xtime.NextMonth),
+					periodic.LinkSiblings(config.Monthly, periodic.LookupMonths),
+				)
+				if err != nil {
+					return err
+				}
+			}
+			if quarter {
+				_, err := planner.Quarter(
+					shift(now, xtime.NextQuarter),
+					periodic.LinkSiblings(config.Quarterly, periodic.LookupQuarters),
+				)
+				if err != nil {
+					return err
+				}
+			}
+			if week {
+				_, err := planner.Year(
+					shift(now, xtime.NextYear),
+					periodic.LinkSiblings(config.Yearly, periodic.LookupYears),
+				)
+				if err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+	}
+	flags := makeCmd.Flags()
+	flags.BoolVar(&week, "week", false, "make plans for the week")
+	flags.BoolVar(&month, "month", false, "make plans for the month")
+	flags.BoolVar(&quarter, "quarter", false, "make plans for the quarter")
+	flags.BoolVar(&year, "year", false, "make plans for the year")
+	flags.BoolVar(&next, "next", false, "make plans for the next period, e.g., next week, etc.")
 
 	cmd.AddCommand(makeCmd)
 

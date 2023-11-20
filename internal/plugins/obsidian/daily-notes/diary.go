@@ -16,16 +16,14 @@ import (
 	xerrors "go.octolab.org/ecosystem/sparkle/internal/pkg/x/errors"
 )
 
-const ext = ".md"
-
 func New(cnf Config, opts ...Option) *Diary {
 	diary := &Diary{
 		cnf: cnf,
 		ext: ext,
 		fs:  afero.NewOsFs(),
 	}
-	for _, opt := range append(opts, normalize) {
-		opt(diary)
+	for _, option := range append(opts, normalize) {
+		option(diary)
 	}
 	return diary
 }
