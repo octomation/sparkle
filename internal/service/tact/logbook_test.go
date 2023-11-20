@@ -10,15 +10,40 @@ func TestLogbook_Log(t *testing.T) {
 	tests := map[string]struct {
 		logs   []string
 		report string
+		desc   string
 	}{
-		"long internal interval": {
+		"threshold challenge": {
 			logs: []string{
-				"- 12:15 / 13:00 - routine solving / 🥱",
-				"- 13:15 / 14:00 - day planning / 🤔",
-				"- 14:00 / 15:00 - micro-tasking / 🥱",
-				"- 15:00 / 2h15m / 22:15 - focusing on the goal / 😤",
+				"- 09:30 / 10:00 - day planning and reflection / 🤔",
+				"- 10:00 / 5h / 00:00 - focused work on tasks / 🫠",
 			},
-			report: "10h total / 2h30m break 25% / 7h30m work 75%",
+			report: "14h30m total / 5h break 35% / 9h30m work 65%",
+			desc: `
+				There is a threshold to prevent incorrect inputs, e.g., from the past.
+				An example:
+					- 09:30 / 10:00 - day planning / 🤔
+					- 09:50 / 12:00 - hard work / 😤
+				A primitive solution for checking linearity has a disadvantage:
+					- 23:00 / 01:00 - hard work / 😤
+				From "23:00" >> To "01:00" because they are parsed for the same day.
+				To handle this case, we must define a work time threshold.
+			`,
+		},
+		"long breaks between actions": {
+			logs: []string{
+				"- 09:15 / 10:00 - day planning / 🤔",
+				"- 13:00 / 15:00 - routine solving / 🥱",
+				"- 16:00 / 19:15 - goal achieving / 😤",
+			},
+			report: "10h total / 4h break 40% / 6h work 60%",
+		},
+		"long breaks inside actions": {
+			logs: []string{
+				"- 09:15 / 10:00 - day planning / 🤔",
+				"- 11:00 / 2h / 15:00 - routine solving / 🥱",
+				"- 16:00 / 1h / 19:15 - goal achieving / 😤",
+			},
+			report: "10h total / 5h break 50% / 5h work 50%",
 		},
 		"long working day": {
 			logs: []string{
@@ -27,17 +52,17 @@ func TestLogbook_Log(t *testing.T) {
 				"- 13:45 / 45m / 16:30 - reading the book / 😤",
 				"- 17:00 / 1h / 21:00 - focusing on the goal / 😬",
 				"- 21:00 / 22:00 - solve critical issue / 😬",
-				"- 23:00 / 01:15 - write tests / 🫠",
+				"- 23:15 / 01:15 - write tests / 🫠",
 			},
-			report: "14h total / 3h45m break 27% / 10h15m work 73%",
+			report: "14h total / 4h break 29% / 10h work 71%",
 		},
 		"late start": {
 			logs: []string{
 				"- 21:00 / 22:00 - solve critical issue / 😬",
 				"- 23:00 / 01:15 - write tests / 🫠",
-				"- 01:30 / 03:00 - focusing on the goal / 😤",
+				"- 01:30 / 45m / 07:00 - focusing on the goal / 😤",
 			},
-			report: "6h total / 1h15m break 21% / 4h45m work 79%",
+			report: "10h total / 2h break 20% / 8h work 80%",
 		},
 		"two days run": {
 			logs: []string{
@@ -46,16 +71,16 @@ func TestLogbook_Log(t *testing.T) {
 				"- 13:45 / 45m / 16:30 - reading the book / 😤",
 				"- 17:00 / 1h / 21:00 - focusing on the goal / 😬",
 				"- 21:00 / 22:00 - solve critical issue / 😬",
-				"- 23:00 / 01:15 - write tests / 🫠",
-				"- 01:30 / 08:00 - focusing on the goal / 😤",
+				"- 23:15 / 01:15 - write tests / 🫠",
+				"- 01:30 / 45m / 07:00 - focusing on the goal / 😤",
 				"- 11:15 / 12:15 - day planning / 🤔",
 				"- 12:15 / 13:15 - task solving / 😤",
 				"- 13:45 / 45m / 16:30 - reading the book / 😤",
 				"- 17:00 / 1h / 21:00 - focusing on the goal / 😬",
 				"- 21:00 / 22:00 - solve critical issue / 😬",
-				"- 23:00 / 01:15 - write tests / 🫠",
+				"- 23:15 / 01:15 - write tests / 🫠",
 			},
-			report: "38h total / 11h break 29% / 27h work 71%",
+			report: "38h total / 13h15m break 35% / 24h45m work 65%",
 		},
 	}
 
