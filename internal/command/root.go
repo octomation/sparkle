@@ -22,7 +22,6 @@ func New() *cobra.Command {
 	command.AddCommand(
 		sparkle.Search(),
 		sparkle.Stream(),
-		sparkle.Tact(),
 		NewServer(),
 		NewClient(),
 	)

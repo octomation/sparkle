@@ -1,6 +1,8 @@
 package sparkle
 
 import (
+	"bufio"
+	"os"
 	"time"
 
 	"github.com/nleeper/goment"
@@ -11,6 +13,7 @@ import (
 	xtime "go.octolab.org/ecosystem/sparkle/internal/pkg/x/time"
 	diary "go.octolab.org/ecosystem/sparkle/internal/plugins/obsidian/daily-notes"
 	"go.octolab.org/ecosystem/sparkle/internal/plugins/obsidian/periodic-notes"
+	"go.octolab.org/ecosystem/sparkle/internal/service/tact"
 )
 
 func Stream() *cobra.Command {
@@ -20,6 +23,7 @@ func Stream() *cobra.Command {
 	}
 	cmd.AddCommand(
 		Diary(),
+		Logbook(),
 		Plans(),
 	)
 	return cmd
@@ -97,6 +101,40 @@ func Diary() *cobra.Command {
 	return cmd
 }
 
+func Logbook() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:  "logbook command",
+		Args: cobra.NoArgs,
+	}
+
+	calculate := &cobra.Command{
+		Use:  "calculate {stdin}",
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			journal := tact.NewLinearJournal()
+			scanner := bufio.NewScanner(cmd.InOrStdin())
+			scanner.Split(bufio.ScanLines)
+			for scanner.Scan() {
+				if err := journal.Log(scanner.Text()); err != nil {
+					return err
+				}
+			}
+			if err := scanner.Err(); err != nil {
+				return err
+			}
+
+			// temporary hack
+			cmd.SetOut(os.Stdout)
+			cmd.Println(journal)
+			return nil
+		},
+	}
+
+	cmd.AddCommand(calculate)
+
+	return cmd
+}
+
 func Plans() *cobra.Command {
 	fs := afero.NewOsFs()
 	cmd := &cobra.Command{
@@ -168,7 +206,7 @@ func Plans() *cobra.Command {
 					return err
 				}
 			}
-			if week {
+			if year {
 				_, err := planner.Year(
 					shift(now, xtime.NextYear),
 					periodic.LinkSiblings(config.Yearly, periodic.LookupYears),
