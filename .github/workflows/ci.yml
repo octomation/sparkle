@@ -92,7 +92,7 @@ jobs:
           [ $(ls bin/linux/*/* | wc -l) = 2 ]
 
   publish:
-    name: Publishing
+    name: Documentation
     needs: [ test ]
     uses: ./.github/workflows/cd.docs.yml
     permissions:
@@ -101,9 +101,9 @@ jobs:
     if: true
 
   release:
-    name: Releasing
+    name: Distribution
     needs: [ test ]
-    uses: ./.github/workflows/cd.bins.yml
+    uses: ./.github/workflows/cd.dist.yml
     secrets:
       GORELEASER_TOKEN: ${{ secrets.GORELEASER_TOKEN }}
     if: startsWith(github.ref, 'refs/tags/v')
