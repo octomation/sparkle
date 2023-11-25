@@ -23,13 +23,10 @@ brews:
       name: homebrew-tap
     install: |
       bin.install "sparkle"
-
       output = Utils.popen_read("#{bin}/sparkle completion bash")
       (bash_completion/"sparkle").write output
-
       output = Utils.popen_read("#{bin}/sparkle completion fish")
       (fish_completion/"sparkle.fish").write output
-
       output = Utils.popen_read("#{bin}/sparkle completion zsh")
       (zsh_completion/"_sparkle").write output
 
@@ -55,6 +52,64 @@ builds:
     main: .
 
 checksum: { name_template: checksums.txt }
+
+dockers:
+  - id: service-linux-amd64
+    goos: linux
+    goarch: amd64
+    ids:
+      - sparkle
+    image_templates:
+      - 'ghcr.io/withsparkle/service:{{.Tag}}-amd64'
+      - 'ghcr.io/withsparkle/service:v{{.Major}}-amd64'
+      - 'ghcr.io/withsparkle/service:v{{.Major}}.{{.Minor}}-amd64'
+    use: buildx
+    build_flag_templates:
+      - '--pull'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/amd64'
+    extra_files:
+      - deploy/config.toml
+      - LICENSE
+  - id: server-linux-arm64
+    goos: linux
+    goarch: arm64
+    ids:
+      - server
+    image_templates:
+      - 'ghcr.io/withsparkle/service:{{.Tag}}-arm64'
+      - 'ghcr.io/withsparkle/service:v{{.Major}}-arm64'
+      - 'ghcr.io/withsparkle/service:v{{.Major}}.{{.Minor}}-arm64'
+    use: buildx
+    build_flag_templates:
+      - '--pull'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/arm64'
+    extra_files:
+      - deploy/config.toml
+      - LICENSE
+
+docker_manifests:
+  - name_template: 'ghcr.io/withsparkle/service:latest'
+    image_templates:
+      - 'ghcr.io/withsparkle/service:{{.Tag}}-amd64'
+      - 'ghcr.io/withsparkle/service:{{.Tag}}-arm64'
+  - name_template: 'ghcr.io/withsparkle/service:{{.Tag}}'
+    image_templates:
+      - 'ghcr.io/withsparkle/service:{{.Tag}}-amd64'
+      - 'ghcr.io/withsparkle/service:{{.Tag}}-arm64'
+  - name_template: 'ghcr.io/withsparkle/service:v{{.Major}}'
+    image_templates:
+      - 'ghcr.io/withsparkle/service:v{{.Major}}-amd64'
+      - 'ghcr.io/withsparkle/service:v{{.Major}}-arm64'
+  - name_template: 'ghcr.io/withsparkle/service:v{{.Major}}.{{.Minor}}'
+    image_templates:
+      - 'ghcr.io/withsparkle/service:v{{.Major}}.{{.Minor}}-amd64'
+      - 'ghcr.io/withsparkle/service:v{{.Major}}.{{.Minor}}-arm64'
 
 release:
   github:
