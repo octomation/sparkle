@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.description="The personal development framework a
 LABEL org.opencontainers.image.source="https://github.com/withsparkle/service"
 LABEL org.opencontainers.image.licenses="AGPL-3.0-later"
 
-COPY sparkle /
+COPY sparkle /sparkle
 EXPOSE 3360 8080 8081 8890 8891
 
 ENTRYPOINT ["/sparkle"]

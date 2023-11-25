@@ -71,13 +71,12 @@ dockers:
       - '--label=org.opencontainers.image.version={{.Version}}'
       - '--platform=linux/amd64'
     extra_files:
-      - deploy/config.toml
       - LICENSE
-  - id: server-linux-arm64
+  - id: service-linux-arm64
     goos: linux
     goarch: arm64
     ids:
-      - server
+      - sparkle
     image_templates:
       - 'ghcr.io/withsparkle/service:{{.Tag}}-arm64'
       - 'ghcr.io/withsparkle/service:v{{.Major}}-arm64'
@@ -90,7 +89,6 @@ dockers:
       - '--label=org.opencontainers.image.version={{.Version}}'
       - '--platform=linux/arm64'
     extra_files:
-      - deploy/config.toml
       - LICENSE
 
 docker_manifests:
