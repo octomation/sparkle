@@ -3,12 +3,12 @@ module go.octolab.org/ecosystem/sparkle
 go 1.21.3
 
 require (
-	connectrpc.com/connect v1.12.0
+	connectrpc.com/connect v1.13.0
 	github.com/BurntSushi/toml v1.3.2
 	github.com/fatih/color v1.16.0
 	github.com/goccy/go-yaml v1.11.2
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/nleeper/goment v1.4.4
 	github.com/pkg/errors v0.9.1

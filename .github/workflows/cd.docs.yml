@@ -41,7 +41,7 @@ jobs:
           cache-dependency-path: docs/package-lock.json
           check-latest: true
       - name: Set up GitHub Pages
-        uses: actions/configure-pages@v3.0.6
+        uses: actions/configure-pages@v4.0.0
       - name: Install dependencies
         run: ./Taskfile docs npm ci
 
@@ -73,7 +73,7 @@ jobs:
     steps:
       - name: Deploy it to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2.0.4
+        uses: actions/deploy-pages@v3.0.1
 
   notify:
     name: Notifying
