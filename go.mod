@@ -20,7 +20,7 @@ require (
 	go.octolab.org/toolkit/cli v0.6.3
 	go.octolab.org/toolkit/config v0.0.4
 	golang.org/x/net v0.19.0
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 )
 
 replace github.com/zelenin/go-tdlib => github.com/withsparkle/go-tdlib v0.7.1-0.20231011160900-c4aee4541527
