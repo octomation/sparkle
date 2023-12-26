@@ -3,24 +3,24 @@ module go.octolab.org/ecosystem/sparkle
 go 1.21.3
 
 require (
-	connectrpc.com/connect v1.12.0
+	connectrpc.com/connect v1.14.0
 	github.com/BurntSushi/toml v1.3.2
 	github.com/fatih/color v1.16.0
 	github.com/goccy/go-yaml v1.11.2
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1
 	github.com/nleeper/goment v1.4.4
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
-	github.com/typesense/typesense-go v0.8.0
+	github.com/typesense/typesense-go v0.9.0
 	go.octolab.org v0.12.2
 	go.octolab.org/toolkit/cli v0.6.3
 	go.octolab.org/toolkit/config v0.0.4
 	golang.org/x/net v0.19.0
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 )
 
 replace github.com/zelenin/go-tdlib => github.com/withsparkle/go-tdlib v0.7.1-0.20231011160900-c4aee4541527
