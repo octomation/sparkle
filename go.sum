@@ -316,8 +316,8 @@ github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
 github.com/tkuchiki/go-timezone v0.2.0 h1:yyZVHtQRVZ+wvlte5HXvSpBkR0dPYnPEIgq9qqAqltk=
 github.com/tkuchiki/go-timezone v0.2.0/go.mod h1:b1Ean9v2UXtxSq4TZF0i/TU9NuoWa9hOzOKoGCV2zqY=
-github.com/typesense/typesense-go v0.8.0 h1:jb0pk8LuizYaNgPdoC7lLK16HsYijshHtp2SJe4wVKs=
-github.com/typesense/typesense-go v0.8.0/go.mod h1:4mq4FYHzU7csU/KHaZoyG2bCSKl7GrCeyAr2YhXT1/0=
+github.com/typesense/typesense-go v0.9.0 h1:V1sk0QN6jHevHHiV3GZyL6aIb6Oa8QsmyXRUYJj2Zfg=
+github.com/typesense/typesense-go v0.9.0/go.mod h1:4mq4FYHzU7csU/KHaZoyG2bCSKl7GrCeyAr2YhXT1/0=
 github.com/yuin/goldmark v1.1.25/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.1.32/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
