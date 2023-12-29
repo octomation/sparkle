@@ -1,6 +1,8 @@
 package search
 
 import (
+	"context"
+
 	"github.com/typesense/typesense-go/typesense/api"
 
 	"go.octolab.org/ecosystem/sparkle/internal/service/search/schema"
@@ -11,14 +13,16 @@ var migrations = []*api.CollectionSchema{
 }
 
 func (service *Service) Migrate(drop bool) error {
-	resp, err := service.client.Collections().Retrieve()
+	ctx := context.TODO()
+
+	resp, err := service.client.Collections().Retrieve(ctx)
 	if err != nil {
 		return err
 	}
 
 	if drop {
 		for _, collection := range resp {
-			if _, err := service.client.Collection(collection.Name).Delete(); err != nil {
+			if _, err := service.client.Collection(collection.Name).Delete(ctx); err != nil {
 				return err
 			}
 		}
@@ -39,7 +43,7 @@ func (service *Service) Migrate(drop bool) error {
 		if _, ok := present[name]; ok {
 			continue
 		}
-		if _, err := service.client.Collections().Create(scheme); err != nil {
+		if _, err := service.client.Collections().Create(ctx, scheme); err != nil {
 			return err
 		}
 	}
@@ -48,7 +52,7 @@ func (service *Service) Migrate(drop bool) error {
 		if _, ok := expected[name]; ok {
 			continue
 		}
-		if _, err := service.client.Collection(name).Delete(); err != nil {
+		if _, err := service.client.Collection(name).Delete(ctx); err != nil {
 			return err
 		}
 	}

@@ -2,6 +2,7 @@ package search
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
 	"github.com/typesense/typesense-go/typesense"
@@ -20,6 +21,8 @@ type Service struct {
 }
 
 func (service *Service) Find(query string) ([]schema.Sparkle, error) {
+	ctx := context.TODO()
+
 	params := &api.SearchCollectionParams{
 		Q:                   query,
 		QueryBy:             schema.Sparkle{}.QueryFields(),
@@ -30,7 +33,7 @@ func (service *Service) Find(query string) ([]schema.Sparkle, error) {
 	result, err := service.client.
 		Collection(schema.Sparkle{}.Collection()).
 		Documents().
-		Search(params)
+		Search(ctx, params)
 	if err != nil {
 		return nil, err
 	}
@@ -57,11 +60,13 @@ func (service *Service) Find(query string) ([]schema.Sparkle, error) {
 }
 
 func (service *Service) Index(docs ...schema.Sparkle) error {
+	ctx := context.TODO()
+
 	collection := service.client.
 		Collection(schema.Sparkle{}.Collection()).
 		Documents()
 	for _, doc := range docs {
-		if _, err := collection.Upsert(doc); err != nil {
+		if _, err := collection.Upsert(ctx, doc); err != nil {
 			return err
 		}
 	}
