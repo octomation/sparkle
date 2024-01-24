@@ -8,7 +8,7 @@ require (
 	github.com/fatih/color v1.16.0
 	github.com/goccy/go-yaml v1.11.2
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
 	github.com/nleeper/goment v1.4.4
 	github.com/pkg/errors v0.9.1
