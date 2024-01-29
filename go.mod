@@ -6,7 +6,7 @@ require (
 	connectrpc.com/connect v1.14.0
 	github.com/BurntSushi/toml v1.3.2
 	github.com/fatih/color v1.16.0
-	github.com/goccy/go-yaml v1.11.2
+	github.com/goccy/go-yaml v1.11.3
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.5.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
