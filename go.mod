@@ -9,7 +9,7 @@ require (
 	github.com/goccy/go-yaml v1.11.2
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.5.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
 	github.com/nleeper/goment v1.4.4
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.11.0
@@ -19,7 +19,7 @@ require (
 	go.octolab.org v0.12.2
 	go.octolab.org/toolkit/cli v0.6.3
 	go.octolab.org/toolkit/config v0.0.4
-	golang.org/x/net v0.19.0
+	golang.org/x/net v0.20.0
 	google.golang.org/protobuf v1.32.0
 )
 
@@ -51,7 +51,7 @@ require (
 	github.com/tkuchiki/go-timezone v0.2.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/sys v0.15.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
